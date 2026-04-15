@@ -18,7 +18,7 @@ export const login = async (username, password) => {
   formData.append('username', username);
   formData.append('password', password);
   
-  const response = await api.post(`/auth/login`, formData, {
+  const response = await api.post(`auth/login`, formData, {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
   });
   
@@ -36,7 +36,7 @@ export const login = async (username, password) => {
 };
 
 export const register = async (username, password, role, fullName) => {
-  const response = await api.post(`/auth/register`, { username, password, role, full_name: fullName });
+  const response = await api.post(`auth/register`, { username, password, role, full_name: fullName });
   return response.data;
 };
 
@@ -63,7 +63,7 @@ export const predictScan = async (userId, file) => {
   formData.append('user_id', userId);
   formData.append('file', file);
 
-  const response = await api.post('/predict', formData, {
+  const response = await api.post('predict', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -76,7 +76,7 @@ export const predictAudio = async (userId, file) => {
   formData.append('user_id', userId);
   formData.append('file', file);
 
-  const response = await api.post('/predict/audio', formData, {
+  const response = await api.post('predict/audio', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -85,19 +85,19 @@ export const predictAudio = async (userId, file) => {
 };
 
 export const getHistory = async (userId) => {
-  const response = await api.get(`/history?user_id=${userId}`);
+  const response = await api.get(`history?user_id=${userId}`);
   return response.data;
 };
 
 export const getScanResult = async (scanId) => {
-  const response = await api.get(`/scan/${scanId}`);
+  const response = await api.get(`scan/${scanId}`);
   return response.data;
 };
 
 // --- Monitoring APIs ---
 
 export const simulateVitals = async (userId, spo2, respiratoryRate, heartRate) => {
-  const response = await api.post('/vitals', {
+  const response = await api.post('vitals', {
     user_id: userId,
     spo2: spo2,
     respiratory_rate: respiratoryRate,
@@ -107,17 +107,17 @@ export const simulateVitals = async (userId, spo2, respiratoryRate, heartRate) =
 };
 
 export const getVitals = async (userId) => {
-  const response = await api.get(`/vitals/${userId}`);
+  const response = await api.get(`vitals/${userId}`);
   return response.data;
 };
 
 export const getVitalsHistory = async (userId) => {
-  const response = await api.get(`/vitals/${userId}/history`);
+  const response = await api.get(`vitals/${userId}/history`);
   return response.data;
 };
 
 export const getAlerts = async (userId) => {
-  const response = await api.get(`/alerts/${userId}`);
+  const response = await api.get(`alerts/${userId}`);
   return response.data;
 };
 
@@ -129,61 +129,61 @@ export const getAllPatients = async () => {
 export const getPatients = getAllPatients;
 
 export const updateReport = async (userId, reportText) => {
-  const response = await api.post(`/patients/${userId}/report`, { report: reportText });
+  const response = await api.post(`patients/${userId}/report`, { report: reportText });
   return response.data;
 };
 
 // --- Generative AI APIs ---
 export const generateMedicalReport = async (userId) => {
-  const response = await api.get(`/ai/report/${userId}`);
+  const response = await api.get(`ai/report/${userId}`);
   return response.data;
 };
 
 export const sendAIChatMessage = async (message) => {
-  const response = await api.post('/ai/chat', { message });
+  const response = await api.post('ai/chat', { message });
   return response.data;
 };
 
 // --- Medications APIs ---
 export const getMedications = async () => {
-  const response = await api.get('/medications');
+  const response = await api.get('medications');
   return response.data;
 };
 
 export const addMedication = async (name, dosage, time) => {
-  const response = await api.post('/medications', { name, dosage, time });
+  const response = await api.post('medications', { name, dosage, time });
   return response.data;
 };
 
 export const toggleMedication = async (medId) => {
-  const response = await api.patch(`/medications/${medId}/toggle`);
+  const response = await api.patch(`medications/${medId}/toggle`);
   return response.data;
 };
 
 export const deleteMedication = async (medId) => {
-  const response = await api.delete(`/medications/${medId}`);
+  const response = await api.delete(`medications/${medId}`);
   return response.data;
 };
 
 // --- Smoking Profile APIs ---
 export const getSmokingProfile = async () => {
-  const response = await api.get('/user/smoking-profile');
+  const response = await api.get('user/smoking-profile');
   return response.data;
 };
 
 export const updateSmokingProfile = async (profileData) => {
-  const response = await api.patch('/user/smoking-profile', profileData);
+  const response = await api.patch('user/smoking-profile', profileData);
   return response.data;
 };
 
 // --- Breathing exercise APIs ---
 export const logBreathingSession = async (technique, rounds, durationMinutes) => {
-  const response = await api.post('/breathing', { technique, rounds, duration_minutes: durationMinutes });
+  const response = await api.post('breathing', { technique, rounds, duration_minutes: durationMinutes });
   return response.data;
 };
 
 export const getBreathingHistory = async () => {
-  const response = await api.get('/breathing/history');
+  const response = await api.get('breathing/history');
   return response.data;
 };
 

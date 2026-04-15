@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UploadCloud, CheckCircle, AlertCircle, Loader2, Image as ImageIcon, Zap, ShieldCheck, Mic } from 'lucide-react';
 import { predictScan } from '../api';
@@ -83,27 +83,27 @@ export default function UploadScan({ user }) {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <div className="p-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
-                <Zap size={14} className="text-cyan-400" />
+              <div className="p-1.5 rounded-lg bg-medical/10 border border-medical/20">
+                <Zap size={14} className="text-medical" />
               </div>
-              <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">Neural Vision AI</span>
+              <span className="text-[10px] font-mono font-bold text-medical uppercase tracking-[0.2em]">Neural Vision Hub</span>
             </div>
-            <h2 className="text-4xl font-display font-black text-white tracking-tight">Chest X-Ray <span className="text-gradient-cyan">Analysis</span></h2>
-            <p className="text-slate-400 mt-2 font-light max-w-md">
-              High-precision pathological detection using DenseNet-121 architecture.
+            <h2 className="text-4xl md:text-5xl font-display font-black text-white tracking-tight">Chest X-Ray <span className="text-medical">Analysis</span></h2>
+            <p className="text-slate-400 mt-2 font-medium max-w-md">
+              High-precision clinical detection utilizing the Advanced Medical Engine.
             </p>
             
             <button 
               onClick={() => navigate('/upload-audio')}
-              className="mt-6 flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs font-bold hover:bg-violet-500/20 transition-all border-dashed"
+              className="mt-6 flex items-center gap-2 px-4 py-2 rounded-xl bg-clinical/10 border border-clinical/20 text-clinical text-[10px] font-bold uppercase tracking-widest hover:bg-clinical/20 transition-all"
             >
                <Mic size={14} />
-               Switch to Cough Analysis logic
+               Switch to Cough Analysis
             </button>
           </div>
           <div className="hidden sm:flex items-center gap-4 text-[10px] font-mono text-slate-500 uppercase tracking-widest bg-black/20 px-4 py-2 rounded-xl border border-white/5">
-             <ShieldCheck size={14} className="text-emerald-400" />
-             <span>HIPAA Compliant Pipeline</span>
+             <ShieldCheck size={14} className="text-medical" />
+             <span>Clinical Privacy-First Protocol</span>
           </div>
         </div>
 
@@ -121,21 +121,21 @@ export default function UploadScan({ user }) {
 
           {!preview ? (
             <div className="py-20 flex flex-col items-center relative z-10">
-              <div className="p-6 bg-slate-900 rounded-3xl mb-6 border border-white/5 shadow-2xl relative">
-                <div className="absolute inset-0 bg-cyan-500/20 blur-xl rounded-full animate-pulse" />
-                <UploadCloud className="h-12 w-12 text-cyan-400 relative z-10" />
+              <div className="p-6 bg-slate-900 rounded-[2rem] mb-6 border border-white/5 shadow-2xl relative">
+                <div className="absolute inset-0 bg-medical/20 blur-xl rounded-full animate-pulse" />
+                <UploadCloud className="h-12 w-12 text-medical relative z-10" />
               </div>
-              <h3 className="text-xl font-display font-bold text-white mb-2">Drop chest X-ray here</h3>
-              <p className="text-slate-500 text-sm mb-8 font-light">or click to browse from your computer</p>
+              <h3 className="text-2xl font-display font-bold text-white mb-2 uppercase tracking-tight">Drop Scan to Analyze</h3>
+              <p className="text-slate-500 text-sm mb-8 font-medium">Drag-and-drop or select clinical imagery</p>
               
-              <label className="btn-primary cursor-pointer inline-flex items-center gap-2 text-sm">
+              <label className="btn-primary cursor-pointer inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest px-8">
                 <ImageIcon size={18} />
-                Select Scan
+                Open File Explorer
                 <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
               </label>
               
-              <div className="mt-10 flex gap-6 text-[10px] font-mono text-slate-600 uppercase tracking-[0.2em]">
-                {['DICOM', 'JPEG', 'PNG', 'WEBP'].map(f => (
+              <div className="mt-10 flex gap-6 text-[10px] font-mono text-slate-600 uppercase tracking-[0.25em]">
+                {['DICOM', 'JPEG', 'PNG'].map(f => (
                   <span key={f} className="flex items-center gap-1.5">
                     <div className="w-1 h-1 rounded-full bg-slate-700" /> {f}
                   </span>

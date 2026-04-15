@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getHistory } from '../api';
 import { 
   Activity, Clock, AlertCircle, CheckCircle2, 
@@ -78,14 +78,14 @@ export default function History({ user }) {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
          <div>
             <div className="flex items-center gap-2 mb-2">
-               <div className="p-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
-                  <Clock size={14} className="text-cyan-400" />
+               <div className="p-1.5 rounded-lg bg-medical/10 border border-medical/20">
+                  <Clock size={14} className="text-medical" />
                </div>
-               <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">Diagnostic Archives</span>
+               <span className="text-[10px] font-mono font-bold text-medical uppercase tracking-[0.2em]">Diagnostic Archives</span>
             </div>
-            <h2 className="text-4xl font-display font-black text-white tracking-tight">Case <span className="text-gradient-cyan">History</span></h2>
-            <p className="text-slate-400 mt-2 font-light max-w-md">
-               Longitudinal record of all AI-assisted respiratory assessments.
+            <h2 className="text-4xl md:text-5xl font-display font-black text-white tracking-tight uppercase">Medical <span className="text-medical">Vault</span></h2>
+            <p className="text-slate-400 mt-2 font-medium max-w-md">
+               Longitudinal record of AI-assisted respiratory assessments and clinical markers.
             </p>
          </div>
 
@@ -149,18 +149,18 @@ export default function History({ user }) {
                   </div>
 
                   <div className="flex justify-between items-start mb-6">
-                    <div className={`p-3 rounded-2xl ${isAudio ? 'bg-violet-500/10 text-violet-400 border-violet-500/20' : 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'} border`}>
+                    <div className={`p-3 rounded-2xl ${isAudio ? 'bg-clinical/10 text-clinical border-clinical/20' : 'bg-medical/10 text-medical border-medical/20'} border`}>
                        {isAudio ? <Headphones size={20} /> : <Microscope size={20} />}
                     </div>
                     <div className="text-right">
                        <p className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest mb-1">ID: #{String(scan.id).padStart(5, '0')}</p>
                        <div className="flex items-center justify-end gap-1.5 text-[10px] text-slate-400 font-mono">
-                          <Calendar size={12} className="text-cyan-400" /> {scan.timestamp ? new Date(scan.timestamp).toLocaleDateString() : 'N/A'}
+                          <Calendar size={12} className="text-medical" /> {scan.timestamp ? new Date(scan.timestamp).toLocaleDateString() : 'N/A'}
                        </div>
                     </div>
                   </div>
 
-                  <h4 className="text-2xl font-display font-black text-white mb-2 group-hover:text-cyan-400 transition-colors uppercase tracking-tight truncate">
+                  <h4 className="text-2xl font-display font-black text-white mb-2 group-hover:text-medical transition-colors uppercase tracking-tight truncate">
                      {displayText}
                   </h4>
                   

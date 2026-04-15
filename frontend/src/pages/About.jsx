@@ -1,3 +1,4 @@
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Activity, Code, Server, Brain, HeartPulse, Wind, Mic, Radio, Wifi, ShieldCheck, Zap, Globe, Cpu } from 'lucide-react';
 

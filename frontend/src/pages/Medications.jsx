@@ -1,4 +1,6 @@
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Pill, Plus, AlertCircle, Clock, CheckCircle2, Trash2, LayoutDashboard, Calendar, Activity } from 'lucide-react';
 import { getMedications, addMedication, toggleMedication, deleteMedication } from '../api';
 import { useToast } from '../components/Toast';
 

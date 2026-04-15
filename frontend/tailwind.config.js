@@ -7,12 +7,38 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        display: ['Outfit', 'sans-serif'],
+        sans: ['"DM Sans"', 'Inter', 'sans-serif'],
+        display: ['Syne', 'Outfit', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
       colors: {
-        // Deep Space Navy - primary base
+        // Advanced Dark Palette
+        primary: {
+          darker: '#0a0f1e',
+          dark: '#0d1528',
+          mid: '#111d35',
+          light: '#162245',
+        },
+        // Health/Medical Accent (Teal)
+        medical: {
+          400: '#00e6c0',
+          DEFAULT: '#00c9a7',
+          600: '#00b396',
+        },
+        // Clinical Blue
+        clinical: {
+          400: '#5ea2f9',
+          DEFAULT: '#3d8ef8',
+          600: '#2a7de5',
+        },
+        // Warning/Alert colors
+        alert: {
+          rose: '#e05c6f',
+          amber: '#f5a623',
+          emerald: '#00c9a7',
+          crit: '#ff3d71',
+        },
+        // Legacy compatibility
         navy: {
           950: '#030712',
           900: '#070d1a',

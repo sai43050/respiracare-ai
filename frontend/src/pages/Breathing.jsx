@@ -7,9 +7,9 @@ const techniques = [
   {
     name: 'Box Breathing',
     benefit: 'Neutralizes high stress states',
-    desc: 'Equal phases of inhale, hold, exhale, and hold. Used by elite athletes and Navy SEALs for peak cognitive control.',
+    desc: 'Equal phases of inhale, hold, exhale, and hold. Used for peak cognitive control and nervous system stabilization.',
     timing: { inhale: 4, hold1: 4, exhale: 4, hold2: 4 },
-    color: '#06b6d4'
+    color: '#00c9a7'
   },
   {
     name: '4-7-8 Relax',
@@ -28,9 +28,9 @@ const techniques = [
   {
     name: 'Pursed Lip',
     benefit: 'Airway diameter maintenance',
-    desc: 'Therapeutic for obstructive conditions. Keeps airways open longer during the exhalation phase.',
+    desc: 'Therapeutic for obstructive conditions. Keeps airways open longer during the exhalation phase to optimize ventilation.',
     timing: { inhale: 2, hold1: 0, exhale: 4, hold2: 0 },
-    color: '#f43f5e'
+    color: '#e05c6f'
   },
   {
     name: 'Power Breath',
@@ -151,14 +151,14 @@ const Breathing = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div>
             <div className="flex items-center gap-2 mb-2">
-               <div className="p-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                  <Wind size={14} className="text-emerald-400" />
+               <div className="p-1.5 rounded-lg bg-medical/10 border border-medical/20">
+                  <Wind size={14} className="text-medical" />
                </div>
-               <span className="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-widest">Respiratory Optimization</span>
+               <span className="text-[10px] font-mono font-bold text-medical uppercase tracking-[0.2em]">Respiratory Optimization</span>
             </div>
-            <h1 className="text-4xl font-display font-black text-white tracking-tight">Lung <span className="text-gradient-cyan">Therapy</span></h1>
-            <p className="text-slate-400 mt-2 font-light max-w-sm">
-               Neuro-respiratory exercises designed to stabilize heart rate variability.
+            <h1 className="text-4xl md:text-5xl font-display font-black text-white tracking-tight">Lung <span className="text-medical">Therapy</span></h1>
+            <p className="text-slate-400 mt-2 font-medium max-w-sm">
+               Neuro-respiratory exercises designed to stabilize autonomic nervous system variability.
             </p>
           </div>
           
@@ -216,9 +216,9 @@ const Breathing = () => {
                 
                 <div className="grid grid-cols-3 gap-4 pt-4 border-t border-white/5">
                   {[
-                    { label: 'Session Rounds', val: round, icon: RotateCcw, color: 'cyan' },
-                    { label: 'Target Mins', val: totalMins.toFixed(1), icon: Wind, color: 'violet' },
-                    { label: 'Weekly Score', val: Math.min(1000, Math.floor(totalMins * 10)).toString(), icon: TrendingUp, color: 'emerald' }
+                    { label: 'Session Rounds', val: round, icon: RotateCcw, color: '#00c9a7' },
+                    { label: 'Target Mins', val: totalMins.toFixed(1), icon: Wind, color: '#3d8ef8' },
+                    { label: 'Weekly Score', val: Math.min(1000, Math.floor(totalMins * 10)).toString(), icon: TrendingUp, color: '#00c9a7' }
                   ].map((s, i) => (
                     <div key={i} className="text-center">
                        <div className="text-2xl font-display font-black text-white">{s.val}</div>
@@ -320,11 +320,11 @@ const Breathing = () => {
                     exit={{ opacity: 0, y: -10 }}
                     className="flex flex-col items-center"
                   >
-                     <span className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-[0.4em] mb-2">{phase}</span>
-                     <div className="text-6xl font-display font-black text-white mb-2 tabular-nums drop-shadow-2xl">
-                        {count > 0 ? count : (!isActive ? <Play size={48} className="text-white fill-white ml-2" /> : <div className="p-4 rounded-full border border-white/20 animate-spin" />)}
-                     </div>
-                     {isActive && <span className="text-[8px] font-mono text-cyan-400 uppercase tracking-widest font-bold">seconds remaining</span>}
+                      <span className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-[0.4em] mb-2">{phase}</span>
+                      <div className="text-7xl font-display font-black text-white mb-2 tabular-nums drop-shadow-2xl">
+                         {count > 0 ? count : (!isActive ? <Play size={48} className="text-white fill-white ml-2" /> : <div className="p-4 rounded-full border border-white/20 animate-spin" />)}
+                      </div>
+                      {isActive && <span className="text-[8px] font-mono text-medical uppercase tracking-widest font-bold">seconds remaining</span>}
                   </motion.div>
                 </AnimatePresence>
                 

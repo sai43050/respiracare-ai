@@ -1,6 +1,21 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, ShieldCheck, Zap, Activity, Cpu, Wifi, HeartPulse } from 'lucide-react';
+import brandLogo from '../assets/hero_logo.png';
+
+const logoVariants = {
+  animate: {
+    y: [0, -20, 0],
+    rotate: [0, 5, -5, 0],
+    scale: [1, 1.05, 1],
+    transition: {
+      duration: 10,
+      repeat: Infinity,
+      ease: "easeInOut"
+    }
+  }
+};
 
 const floatVariants = {
   initial: { opacity: 0, y: 30 },
@@ -9,21 +24,22 @@ const floatVariants = {
 
 export default function Home({ user }) {
   return (
-    <div className="flex flex-col items-center pt-20 pb-20 relative overflow-hidden min-h-screen">
+    <div className="flex flex-col items-center pt-20 pb-20 relative overflow-hidden min-h-screen font-sans">
 
       {/* Animated aurora background orbs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-48 -right-48 w-[700px] h-[700px] rounded-full opacity-20 animate-pulse-slow"
-          style={{ background: 'radial-gradient(circle, rgba(6,182,212,0.6) 0%, transparent 70%)', filter: 'blur(80px)' }} />
-        <div className="absolute -bottom-48 -left-48 w-[700px] h-[700px] rounded-full opacity-15 animate-pulse-slow"
-          style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.6) 0%, transparent 70%)', filter: 'blur(80px)', animationDelay: '2s' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full opacity-10"
-          style={{ background: 'radial-gradient(circle, rgba(52,211,153,0.4) 0%, transparent 70%)', filter: 'blur(60px)' }} />
+
+        <div className="absolute -top-48 -right-48 w-[700px] h-[700px] rounded-full opacity-25 animate-pulse-slow"
+          style={{ background: 'radial-gradient(circle, rgba(29,78,216,0.3) 0%, transparent 70%)', filter: 'blur(100px)' }} />
+        <div className="absolute -bottom-48 -left-48 w-[700px] h-[700px] rounded-full opacity-20 animate-pulse-slow"
+          style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.3) 0%, transparent 70%)', filter: 'blur(100px)', animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full opacity-15"
+          style={{ background: 'radial-gradient(circle, rgba(6,182,212,0.2) 0%, transparent 70%)', filter: 'blur(80px)' }} />
 
         {/* Grid overlay */}
-        <div className="absolute inset-0 opacity-30"
+        <div className="absolute inset-0 opacity-[0.15]"
           style={{
-            backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='64' height='64' fill='none' stroke='rgb(255 255 255 / 0.03)'%3e%3cpath d='M0 .5H63.5V64'/%3e%3c/svg%3e\")"
+            backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='64' height='64' fill='none' stroke='rgb(255 255 255 / 0.05)'%3e%3cpath d='M0 .5H63.5V64'/%3e%3c/svg%3e\")"
           }} />
       </div>
 
@@ -41,36 +57,36 @@ export default function Home({ user }) {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1 }}
-            className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full"
+            className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full"
             style={{
-              background: 'rgba(6,182,212,0.08)',
-              border: '1px solid rgba(6,182,212,0.25)',
+              background: 'rgba(0,201,167,0.08)',
+              border: '1px solid rgba(0,201,167,0.25)',
               backdropFilter: 'blur(12px)',
             }}
           >
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-medical opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-medical" />
             </span>
-            <span className="text-xs font-mono font-semibold text-cyan-400 uppercase tracking-widest">
-              AI-Powered Respiratory Intelligence
+            <span className="text-xs font-mono font-bold text-medical uppercase tracking-[0.2em]">
+              Next-Gen Respiratory Intelligence
             </span>
           </motion.div>
 
           {/* Headline */}
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-black text-white mb-6 tracking-tight leading-[0.95]">
+          <h1 className="text-6xl md:text-8xl lg:text-9xl font-display font-black text-white mb-6 tracking-tighter leading-[0.9]">
             {user ? (
               <>
-                Welcome back,{' '}
-                <span className="text-gradient capitalize block sm:inline">
-                  {user.full_name || user.username}
+                PROACTIVE <br />
+                <span className="text-medical uppercase block">
+                  HEALTHCARE
                 </span>
               </>
             ) : (
               <>
-                Next-Gen{' '}
-                <span className="text-gradient block sm:inline">
-                  Lung AI
+                NEXT-GEN <br />
+                <span className="text-medical uppercase block">
+                  LUNG AI
                 </span>
               </>
             )}

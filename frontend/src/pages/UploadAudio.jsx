@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UploadCloud, CheckCircle, AlertCircle, Loader2, Mic, Activity, Headphones, Sparkles } from 'lucide-react';
 import { predictAudio } from '../api';
@@ -80,19 +80,27 @@ export default function UploadAudio({ user }) {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <div className="p-1.5 rounded-lg bg-violet-500/10 border border-violet-500/20">
-                <Activity size={14} className="text-violet-400" />
+              <div className="p-1.5 rounded-lg bg-clinical/10 border border-clinical/20">
+                <Mic size={14} className="text-clinical" />
               </div>
-              <span className="text-[10px] font-mono font-bold text-violet-400 uppercase tracking-widest">Acoustic Biomarker AI</span>
+              <span className="text-[10px] font-mono font-bold text-clinical uppercase tracking-[0.2em]">Bio-Acoustic Hub</span>
             </div>
-            <h2 className="text-4xl font-display font-black text-white tracking-tight">Cough <span className="text-gradient-violet">Analyzer</span></h2>
-            <p className="text-slate-400 mt-2 font-light max-w-md">
-              AI-driven acoustic analysis to identify respiratory patterns and anomalies.
+            <h2 className="text-4xl md:text-5xl font-display font-black text-white tracking-tight uppercase">Cough <span className="text-clinical">AI</span></h2>
+            <p className="text-slate-400 mt-2 font-medium max-w-md">
+              AIBio™ biometric analysis of respiratory sound patterns and biomarkers.
             </p>
+            
+            <button 
+              onClick={() => navigate('/upload')}
+              className="mt-6 flex items-center gap-2 px-4 py-2 rounded-xl bg-medical/10 border border-medical/20 text-medical text-[10px] font-bold uppercase tracking-widest hover:bg-medical/20 transition-all"
+            >
+               <Zap size={14} />
+               Switch to X-Ray Hub
+            </button>
           </div>
           <div className="hidden sm:flex items-center gap-4 text-[10px] font-mono text-slate-500 uppercase tracking-widest bg-black/20 px-4 py-2 rounded-xl border border-white/5">
-             <Headphones size={14} className="text-violet-400" />
-             <span>High-Fidelity Audio Pipeline</span>
+             <ShieldCheck size={14} className="text-clinical" />
+             <span>Encrypted Neural Pipeline</span>
           </div>
         </div>
 
@@ -111,22 +119,21 @@ export default function UploadAudio({ user }) {
 
           {!file ? (
             <div className="py-20 flex flex-col items-center relative z-10">
-              <div className="p-6 bg-slate-900 rounded-3xl mb-6 border border-white/5 shadow-2xl relative">
-                <div className="absolute inset-0 bg-violet-500/20 blur-xl rounded-full animate-pulse" />
-                <Mic className="h-12 w-12 text-violet-400 relative z-10" />
+              <div className="p-6 bg-slate-900 rounded-[2rem] mb-6 border border-white/5 shadow-2xl relative">
+                <div className="absolute inset-0 bg-clinical/20 blur-xl rounded-full animate-pulse" />
+                <Mic className="h-12 w-12 text-clinical relative z-10" />
               </div>
-              <h3 className="text-xl font-display font-bold text-white mb-2">Drop cough recording here</h3>
-              <p className="text-slate-500 text-sm mb-8 font-light">or click to upload audio from your device</p>
+              <h3 className="text-2xl font-display font-bold text-white mb-2 uppercase tracking-tight">Upload Audio Feed</h3>
+              <p className="text-slate-500 text-sm mb-8 font-medium">Record or drop clinical cough audio (.wav, .ogg)</p>
               
-              <label className="btn-primary cursor-pointer inline-flex items-center gap-2 text-sm"
-                style={{ background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)', boxShadow: '0 0 20px rgba(139,92,246,0.4)' }}>
+              <label className="btn-primary cursor-pointer inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest px-8">
                 <Headphones size={18} />
-                Select Audio File
+                Open Media Hub
                 <input type="file" className="hidden" accept="audio/*,.ogg" onChange={handleFileChange} />
               </label>
               
-              <div className="mt-10 flex gap-6 text-[10px] font-mono text-slate-600 uppercase tracking-[0.2em]">
-                {['WAV', 'OGG', 'MP3', 'FLAC'].map(f => (
+              <div className="mt-10 flex gap-6 text-[10px] font-mono text-slate-600 uppercase tracking-[0.25em]">
+                {['HI-RES', 'STEREO', 'RAW'].map(f => (
                   <span key={f} className="flex items-center gap-1.5">
                     <div className="w-1 h-1 rounded-full bg-slate-700" /> {f}
                   </span>

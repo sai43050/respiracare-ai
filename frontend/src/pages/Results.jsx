@@ -1,7 +1,7 @@
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AlertCircle, CheckCircle2, ChevronLeft, Microscope, Stethoscope, Lightbulb, ScanLine, Loader2, Share2, Download, ShieldCheck, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect, useState } from 'react';
 import { getScanResult } from '../api';
 
 export default function Results() {
@@ -137,8 +137,8 @@ export default function Results() {
                   <h1 className="text-4xl font-display font-black text-white tracking-tight leading-none mb-1">
                     {predictionText}
                   </h1>
-                  <p className="text-slate-400 text-xs font-light tracking-wide italic">
-                    Scanned on {new Date(result.timestamp).toLocaleString()}
+                  <p className="text-slate-400 text-xs font-medium tracking-wide">
+                    Neural Sequence Analyzed on {new Date(result.timestamp).toLocaleString()}
                   </p>
                 </div>
               </div>
@@ -236,10 +236,10 @@ export default function Results() {
             className="glass-panel p-8 rounded-[2.5rem] border-white/5"
           >
             <div className="flex items-center gap-3 mb-8">
-               <div className="p-2.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400">
+               <div className="p-2.5 rounded-xl bg-clinical/10 border border-clinical/20 text-clinical shadow-lg shadow-clinical/10">
                   <Microscope size={20} />
                </div>
-               <h3 className="font-display font-black text-white text-xl uppercase tracking-tight">Clinical Insights</h3>
+               <h3 className="font-display font-bold text-white text-xl uppercase tracking-tight">Clinical Insights</h3>
             </div>
             
             <div className="space-y-4">

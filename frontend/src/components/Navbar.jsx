@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Activity, UploadCloud, History, Info, Home, LayoutDashboard, PhoneCall, LogOut, Wind, Pill, Leaf, CloudSun, Mic } from 'lucide-react';
 import { getCurrentUser } from '../api';
+import brandLogo from '../assets/hero_logo.png';
 
 function Navbar({ user, onLogout }) {
   const location = useLocation();
@@ -14,12 +15,12 @@ function Navbar({ user, onLogout }) {
     if (activeUser.role === 'patient') {
       navLinks.push(
         { name: 'Dashboard', path: '/patient-dashboard', icon: LayoutDashboard },
-        { name: 'Breathing', path: '/breathing', icon: Wind },
-        { name: 'Quit Smoking', path: '/quitsmoking', icon: Leaf },
-        { name: 'Meds', path: '/medications', icon: Pill },
-        { name: 'Weather', path: '/weather', icon: CloudSun },
-        { name: 'Analysis', path: '/upload', icon: UploadCloud },
+        { name: 'X-Ray AI', path: '/upload', icon: UploadCloud },
         { name: 'Cough AI', path: '/upload-audio', icon: Mic },
+        { name: 'Breathing', path: '/breathing', icon: Wind },
+        { name: 'Meds', path: '/medications', icon: Pill },
+        { name: 'Quit Smoking', path: '/quitsmoking', icon: Leaf },
+        { name: 'Weather Impact', path: '/weather', icon: CloudSun },
         { name: 'History', path: '/history', icon: History }
       );
     } else {
@@ -47,28 +48,13 @@ function Navbar({ user, onLogout }) {
         }}
       >
         <div className="flex justify-between items-center h-14">
-          {/* Logo */}
+          {/* Typography Branding (No Logo Image) */}
           <Link to="/" className="flex items-center space-x-3 pl-1 group">
-            <div className="relative">
-              <div
-                className="p-2 rounded-xl transition-all duration-300 group-hover:scale-110"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(6,182,212,0.2), rgba(139,92,246,0.15))',
-                  border: '1px solid rgba(6,182,212,0.3)',
-                  boxShadow: '0 0 15px rgba(6,182,212,0.2)',
-                }}
-              >
-                <Activity className="h-5 w-5 text-cyan-400" />
-              </div>
-              {/* Pulsing ring */}
-              <div className="absolute inset-0 rounded-xl animate-ping opacity-20"
-                style={{ border: '1px solid rgba(6,182,212,0.6)' }} />
-            </div>
             <div className="hidden sm:block">
-              <span className="font-display font-bold text-xl text-white tracking-wide">
-                Lung <span className="text-gradient-cyan">Whisperer</span>
+              <span className="font-display font-black text-2xl text-white tracking-tight">
+                LUNG <span className="text-medical">WHISPERER</span>
               </span>
-              <div className="text-[9px] font-mono text-cyan-500/60 uppercase tracking-[0.2em] -mt-0.5">AI Diagnostics v2</div>
+              <div className="text-[10px] font-mono text-medical/60 uppercase tracking-[0.3em] -mt-1 font-bold">Advanced Neural Engine</div>
             </div>
           </Link>
 

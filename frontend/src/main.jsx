@@ -34,11 +34,11 @@ if (safeGetItem('env_rev') !== '4.0.5') {
   safeSetItem('env_rev', '4.0.5');
 }
 
-// Global Canonical Redirection
-const CANONICAL_HOST = 'lungwhisperer.netlify.app';
-if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && window.location.hostname !== CANONICAL_HOST) {
-  window.location.replace(`https://${CANONICAL_HOST}${window.location.pathname}${window.location.search}`);
-}
+// Global Canonical Redirection (Deactivated for Vercel/Railway migration)
+// const CANONICAL_HOST = 'lungwhisperer.netlify.app';
+// if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && window.location.hostname !== CANONICAL_HOST) {
+//   window.location.replace(`https://${CANONICAL_HOST}${window.location.pathname}${window.location.search}`);
+// }
 
 try {
   const container = document.getElementById('root');
