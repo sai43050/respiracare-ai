@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { AlertCircle, CheckCircle2, ChevronLeft, Microscope, Stethoscope, Lightbulb, ScanLine, Loader2, Share2, Download, ShieldCheck, Activity } from 'lucide-react';
+import { AlertCircle, CheckCircle2, ChevronLeft, Microscope, Stethoscope, Lightbulb, ScanLine, Loader2, Share2, Download, ShieldCheck, Activity, Sparkles, FileText, ClipboardList } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getScanResult } from '../api';
+import ReactMarkdown from 'react-markdown';
+import { getScanResult, generateMedicalReport, getCurrentUser } from '../api';
 
 export default function Results() {
   const location = useLocation();
@@ -11,6 +12,9 @@ export default function Results() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [fusionReport, setFusionReport] = useState(null);
+  const [isFusionLoading, setIsFusionLoading] = useState(false);
+  const user = getCurrentUser();
 
   useEffect(() => {
     const stateResult = location.state?.result;
@@ -34,6 +38,19 @@ export default function Results() {
       setLoading(false);
     }
   }, [id]);
+
+  const handleGenerateFusionReport = async () => {
+    if (!user?.user_id) return;
+    setIsFusionLoading(true);
+    try {
+      const data = await generateMedicalReport(user.user_id);
+      setFusionReport(data.report || data);
+    } catch (err) {
+      console.error("Fusion Report Failed:", err);
+    } finally {
+      setIsFusionLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -352,6 +369,64 @@ export default function Results() {
                   <Activity size={14} className="text-cyan-500" />
                   <span className="text-[9px] font-mono text-slate-600 uppercase">Advanced System v4.1</span>
                </div>
+            </div>
+          </motion.div>
+
+          {/* Elite AI Fusion Center */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5 }}
+            className="glass-panel p-8 rounded-[2.5rem] relative overflow-hidden border-cyan-500/20 shadow-[0_0_50px_rgba(34,211,238,0.05)]"
+          >
+            <div className="absolute top-0 right-0 p-6 opacity-10">
+               <Sparkles size={120} className="text-cyan-400 rotate-12" />
+            </div>
+
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-6">
+                 <div className="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+                    <Sparkles size={20} />
+                 </div>
+                 <h3 className="font-display font-black text-white text-xl uppercase tracking-tight">AI Multi-Modal Fusion</h3>
+              </div>
+
+              <p className="text-slate-400 text-xs font-light leading-relaxed mb-8">
+                Orchestrate deep clinical synthesis by fusing this scan data with your acoustic cough biomarkers and longitudinal telemetry.
+              </p>
+
+              {!fusionReport ? (
+                <button
+                  onClick={handleGenerateFusionReport}
+                  disabled={isFusionLoading}
+                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-cyan-600 to-indigo-600 text-white font-bold text-sm tracking-widest uppercase flex items-center justify-center gap-3 hover:scale-[1.02] transition-all disabled:opacity-50"
+                  style={{ boxShadow: '0 10px 30px rgba(6, 182, 212, 0.3)' }}
+                >
+                  {isFusionLoading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>Synthesizing Bio-Data...</span>
+                    </>
+                  ) : (
+                    <>
+                      <FileText size={18} />
+                      <span>Generate Deep AI Report</span>
+                    </>
+                  )}
+                </button>
+              ) : (
+                <div className="space-y-6">
+                   <div className="p-6 rounded-2xl bg-white/5 border border-white/10 prose prose-invert prose-sm max-w-none prose-headings:text-cyan-400 prose-headings:font-display prose-headings:uppercase prose-headings:tracking-widest prose-p:text-slate-300 prose-p:leading-relaxed prose-strong:text-white">
+                      <ReactMarkdown>{fusionReport}</ReactMarkdown>
+                   </div>
+                   <button 
+                    onClick={() => setFusionReport(null)}
+                    className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest hover:text-white transition-colors flex items-center gap-2"
+                   >
+                     <ClipboardList size={12} /> Clear Assessment History
+                   </button>
+                </div>
+              )}
             </div>
           </motion.div>
         </div>

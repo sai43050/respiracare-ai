@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { simulateVitals, getVitalsHistory } from '../api';
+import { simulateVitals, getVitalsHistory, sendAIChatMessage } from '../api';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { ShieldCheck, AlertTriangle, Activity, Heart, Wind, Zap, Mic, Bluetooth, BluetoothConnected, Loader2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { ShieldCheck, AlertTriangle, Activity, Heart, Wind, Zap, Mic, Bluetooth, BluetoothConnected, Loader2, MessageSquare, X, Send } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/Toast';
 
@@ -83,6 +83,14 @@ const PatientDashboard = ({ user }) => {
   const [isSimulating, setIsSimulating] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [bluetoothDevice, setBluetoothDevice] = useState(null);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatInput, setChatInput] = useState('');
+  const [chatMessages, setChatMessages] = useState([
+    { role: 'ai', text: 'Hello! I am RespiraBot. I am securely connected to your live telemetry. How can I assist you today?' }
+  ]);
+  const [isChatLoading, setIsChatLoading] = useState(false);
+  const messagesEndRef = useRef(null);
+
   const intervalRef = useRef(null);
   const dataPushRef = useRef(null);
 
@@ -145,20 +153,63 @@ const PatientDashboard = ({ user }) => {
 
   const connectBluetooth = async () => {
     if (!navigator.bluetooth) {
-      showToast("Bluetooth not supported.", "error");
+      showToast("Bluetooth not supported by your browser.", "error");
       return;
     }
     try {
       setIsConnecting(true);
-      const device = await navigator.bluetooth.requestDevice({ filters: [{ services: ['heart_rate'] }] });
+      const device = await navigator.bluetooth.requestDevice({ 
+        filters: [{ services: ['heart_rate'] }] 
+      });
       setBluetoothDevice(device);
-      showToast(`Connected to ${device.name}`, "success");
+      
+      const server = await device.gatt.connect();
+      const service = await server.getPrimaryService('heart_rate');
+      const characteristic = await service.getCharacteristic('heart_rate_measurement');
+      
+      await characteristic.startNotifications();
+      characteristic.addEventListener('characteristicvaluechanged', (event) => {
+        const value = event.target.value;
+        const currentHeartRate = value.getUint8(1);
+        setVitals(prev => ({...prev, heart_rate: currentHeartRate}));
+      });
+
+      showToast(`Hardware Securely Coupled: ${device.name}`, "success");
     } catch (error) {
       console.error(error);
+      showToast("Bluetooth hardware pairing failed.", "error");
     } finally {
       setIsConnecting(false);
     }
   };
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+    
+    const userText = chatInput.trim();
+    setChatMessages(prev => [...prev, { role: 'user', text: userText }]);
+    setChatInput('');
+    setIsChatLoading(true);
+
+    try {
+      // Pass the message along with live vitals contextual hint in the prompt string if wanted, 
+      // but sendAIChatMessage just takes the string and the backend reads vitals directly if written so.
+      // Here we just send message.
+      const response = await sendAIChatMessage(userText);
+      setChatMessages(prev => [...prev, { role: 'ai', text: response.reply || response }]);
+    } catch (error) {
+      setChatMessages(prev => [...prev, { role: 'ai', text: "Error: Neural engine offline or unreachable at this moment." }]);
+    } finally {
+      setIsChatLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (chatOpen && messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chatMessages, chatOpen]);
 
   return (
     <div className="space-y-6 relative z-10 pt-4 pb-20">
@@ -177,12 +228,22 @@ const PatientDashboard = ({ user }) => {
               {user?.full_name || user?.username || 'Patient'} 👋
             </h1>
             <p className="text-slate-400 text-sm font-medium">Respiratory Health Overview · {new Date().toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}</p>
-            <div className="inline-flex items-center gap-2 mt-5 px-3 py-1.5 rounded-full bg-medical/10 border border-medical/20 text-medical text-[10px] font-bold uppercase tracking-widest">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-medical opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-medical"></span>
-              </span>
-              Live Monitoring Active
+            <div className="flex items-center gap-3 mt-5">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-medical/10 border border-medical/20 text-medical text-[10px] font-bold uppercase tracking-widest">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-medical opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-medical"></span>
+                </span>
+                Live Monitoring Active
+              </div>
+              <button 
+                onClick={connectBluetooth}
+                disabled={isConnecting || bluetoothDevice}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-bold uppercase tracking-widest hover:bg-indigo-500/20 transition-colors disabled:opacity-50"
+              >
+                {isConnecting ? <Loader2 className="w-3 h-3 animate-spin"/> : (bluetoothDevice ? <BluetoothConnected className="w-3 h-3"/> : <Bluetooth className="w-3 h-3"/>)}
+                {bluetoothDevice ? 'Coupled' : 'Sync Hardware'}
+              </button>
             </div>
           </div>
           <div className="w-14 h-14 rounded-full bg-gradient-to-br from-medical to-clinical flex items-center justify-center text-primary-darker font-black text-xl shadow-lg ring-4 ring-white/5">
@@ -324,6 +385,85 @@ const PatientDashboard = ({ user }) => {
           </div>
         </div>
       </div>
+
+      {/* RespiraBot Floating Action & Interface */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <AnimatePresence>
+          {chatOpen && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              className="absolute bottom-16 right-0 w-[350px] mb-4 rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+              style={{
+                background: 'rgba(7, 13, 26, 0.95)',
+                backdropFilter: 'blur(30px)'
+              }}
+            >
+              <div className="flex items-center justify-between p-4 border-b border-white/5 bg-white/5">
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <div className="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center border border-cyan-500/30">
+                      <MessageSquare className="w-4 h-4 text-cyan-400" />
+                    </div>
+                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 border-[#070d1a]" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-white leading-tight">RespiraBot AI</h3>
+                    <p className="text-[10px] text-cyan-400 font-mono tracking-widest uppercase">Live Telemetry Coupled</p>
+                  </div>
+                </div>
+                <button onClick={() => setChatOpen(false)} className="text-slate-400 hover:text-white transition-colors">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-4 h-[350px] overflow-y-auto flex flex-col gap-4 scrollbar-thin">
+                {chatMessages.map((msg, i) => (
+                  <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[80%] rounded-2xl p-3 text-sm ${msg.role === 'user' 
+                      ? 'bg-indigo-600 text-white rounded-tr-sm' 
+                      : 'bg-white/5 border border-white/10 text-slate-200 rounded-tl-sm'}`}>
+                      {msg.text}
+                    </div>
+                  </div>
+                ))}
+                {isChatLoading && (
+                  <div className="flex justify-start">
+                    <div className="max-w-[80%] rounded-2xl rounded-tl-sm p-3 text-sm bg-white/5 border border-white/10 flex items-center gap-2">
+                       <Loader2 className="w-4 h-4 animate-spin text-cyan-400" /> <span className="text-slate-400 text-xs font-mono uppercase tracking-widest">Analyzing Vitals...</span>
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+
+              <div className="p-3 border-t border-white/5 bg-black/20">
+                <form onSubmit={handleSendMessage} className="relative">
+                  <input 
+                    type="text" 
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    placeholder="Ask about your respiratory vitals..."
+                    className="w-full bg-white/5 border border-white/10 rounded-full pl-4 pr-12 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 transition-colors"
+                  />
+                  <button type="submit" disabled={isChatLoading || !chatInput.trim()} className="absolute right-1 top-1 bottom-1 w-8 rounded-full bg-cyan-500 hover:bg-cyan-400 text-white flex items-center justify-center transition-colors disabled:opacity-50">
+                    <Send className="w-4 h-4 ml-0.5" />
+                  </button>
+                </form>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <button 
+          onClick={() => setChatOpen(!chatOpen)}
+          className={`w-14 h-14 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(34,211,238,0.3)] transition-all duration-300 ${chatOpen ? 'bg-slate-800 rotate-90 hidden' : 'bg-gradient-to-tr from-cyan-600 to-indigo-500 hover:scale-105'}`}
+        >
+           <MessageSquare className="w-6 h-6 text-white" />
+        </button>
+      </div>
+
     </div>
   );
 };
