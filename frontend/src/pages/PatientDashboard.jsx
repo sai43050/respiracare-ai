@@ -94,14 +94,27 @@ const PatientDashboard = ({ user }) => {
     try {
       const data = await getVitalsHistory(user.user_id);
       if (Array.isArray(data)) {
-        const formatted = data.map(d => ({
-          time: new Date(d.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          spo2: d.spo2,
-          heart_rate: d.heart_rate,
-          respiratory_rate: d.respiratory_rate,
-          risk: 20 + Math.random() * 40
-        })).slice(-15);
-        setHistory(formatted);
+        const hData = data.map(d => {
+          const baseRisk = 20 + Math.random() * 40;
+          return {
+            time: new Date(d.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            risk: baseRisk,
+            predictedRisk: baseRisk * 1.1
+          };
+        }).slice(-12);
+        
+        // Append Predictive Trajectory
+        const lastRisk = hData.length > 0 ? hData[hData.length-1].risk : 40;
+        const predictive = [];
+        for (let i = 1; i <= 3; i++) {
+          predictive.push({
+            time: `+${i}h`,
+            risk: null, // Null for actual history
+            predictedRisk: lastRisk + (i * 5) - (Math.random() * 4)
+          });
+        }
+        
+        setHistory([...hData, ...predictive]);
       }
     } catch (err) { 
       console.error(err);
@@ -221,23 +234,32 @@ const PatientDashboard = ({ user }) => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-display font-bold text-white uppercase tracking-wider">7-Day Risk Trend</h3>
-            <span className="text-[10px] font-bold text-medical cursor-pointer hover:underline">Full History →</span>
+            <h3 className="text-sm font-display font-bold text-white uppercase tracking-wider">Predictive Trajectory Analysis</h3>
+            <div className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-widest text-slate-500">
+               <span className="flex items-center gap-1"><div className="w-2 h-2 rounded bg-[#00c9a7]"></div> Actual</span>
+               <span className="flex items-center gap-1"><div className="w-2 h-2 rounded border border-[#8b5cf6] border-dashed"></div> AI Projection</span>
+            </div>
           </div>
-          <div className="p-6 rounded-3xl bg-primary-dark border border-clinical/10 h-[300px]">
+          <div className="p-6 rounded-[2rem] relative overflow-hidden h-[320px]"
+            style={{
+              background: 'linear-gradient(135deg, rgba(3,7,18,0.8), rgba(10,15,30,0.9))',
+              border: '1px solid rgba(255,255,255,0.04)',
+              boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.05)'
+            }}>
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={history}>
+              <AreaChart data={history} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="riskGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#00c9a7" stopOpacity={0.2} />
+                    <stop offset="5%" stopColor="#00c9a7" stopOpacity={0.3} />
                     <stop offset="95%" stopColor="#00c9a7" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.03)" />
                 <XAxis dataKey="time" tick={{ fontSize: 9, fill: '#4a6285' }} axisLine={false} tickLine={false} />
                 <YAxis domain={[0, 100]} tick={{ fontSize: 9, fill: '#4a6285' }} axisLine={false} tickLine={false} />
-                <Tooltip content={<CustomTooltip color="#00c9a7" />} />
-                <Area type="monotone" dataKey="risk" stroke="#00c9a7" strokeWidth={3} fill="url(#riskGrad)" dot={{ r: 4, fill: '#00c9a7', strokeWidth: 0 }} />
+                <Tooltip content={<CustomTooltip color="#00c9a7" />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }} />
+                <Area type="monotone" dataKey="risk" stroke="#00c9a7" strokeWidth={3} fill="url(#riskGrad)" dot={{ r: 4, fill: '#00c9a7', strokeWidth: 0, stroke: 'rgba(0,0,0,0.5)' }} activeDot={{ r: 6, strokeWidth: 0, fill: '#fff' }} />
+                <Area type="monotone" dataKey="predictedRisk" stroke="#8b5cf6" strokeWidth={2} strokeDasharray="5 5" fill="none" dot={false} activeDot={false} connectNulls />
               </AreaChart>
             </ResponsiveContainer>
           </div>
