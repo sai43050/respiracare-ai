@@ -18,16 +18,24 @@ export default function History({ user }) {
   const navigate = useNavigate();
 
   const fetchHistory = async () => {
-    if (!user?.user_id) return;
+    const currentId = user?.user_id || getCurrentUser()?.user_id;
+    if (!currentId) return;
+    
     setLoading(true);
     setError(false);
     try {
-      const data = await getHistory(user.user_id);
+      const data = await getHistory(currentId);
       setScans(data);
     } catch (err) {
-      console.error(err);
+      console.error("Vault Sync Error:", err);
+      // If it's a 401, the global interceptor handles redirect, 
+      // but we setting error state for visual feedback before unload.
       setError(true);
-      showToast("Medical vault sync failed.", "error");
+      if (err.response?.status === 401) {
+        showToast("Access Token Revoked. Re-syncing session.", "error");
+      } else {
+        showToast("Medical vault sync failed.", "error");
+      }
     } finally {
       setLoading(false);
     }
