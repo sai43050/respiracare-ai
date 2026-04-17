@@ -1,0 +1,21 @@
+{
+  "name": "Lung Whisperer Advanced AI",
+  "short_name": "Lung AI",
+  "description": "Proactive Healthcare and Next-Gen Respiratory Intelligence.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030303",
+  "theme_color": "#030303",
+  "icons": [
+    {
+      "src": "/hero_logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/hero_logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
