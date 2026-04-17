@@ -49,9 +49,9 @@ function Navbar({ user, onLogout }) {
           <Link to="/" className="flex items-center space-x-3 pl-3 group">
             <div className="hidden sm:block">
                <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee] animate-pulse" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse" />
                   <span className="font-display font-black text-xl text-white tracking-tighter">
-                    LUNG<span className="text-cyan-400 font-light">WHISPERER</span>
+                    LUNG<span className="text-emerald-400 font-light">WHISPERER</span>
                   </span>
                </div>
             </div>
@@ -72,14 +72,14 @@ function Navbar({ user, onLogout }) {
                       : 'text-slate-400 hover:text-white hover:bg-white/5'
                   }`}
                   style={isActive ? {
-                    background: 'linear-gradient(135deg, rgba(6,182,212,0.15), rgba(139,92,246,0.1))',
-                    border: '1px solid rgba(6,182,212,0.25)',
-                    boxShadow: '0 0 12px rgba(6,182,212,0.15)',
+                    background: 'linear-gradient(135deg, rgba(16,185,129,0.15), rgba(2,132,199,0.1))',
+                    border: '1px solid rgba(16,185,129,0.25)',
+                    boxShadow: '0 0 12px rgba(16,185,129,0.15)',
                   } : {
                     border: '1px solid transparent',
                   }}
                 >
-                  <Icon className={`h-3.5 w-3.5 ${isActive ? 'text-cyan-400' : ''}`} />
+                  <Icon className={`h-3.5 w-3.5 ${isActive ? 'text-emerald-400' : ''}`} />
                   <span>{link.name}</span>
                 </Link>
               );
@@ -101,8 +101,8 @@ function Navbar({ user, onLogout }) {
                   <div
                     className="h-7 w-7 rounded-lg flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
                     style={{
-                      background: 'linear-gradient(135deg, #06b6d4, #8b5cf6)',
-                      boxShadow: '0 0 12px rgba(6,182,212,0.4)',
+                      background: 'linear-gradient(135deg, #10b981, #0ea5e9)',
+                      boxShadow: '0 0 12px rgba(16,185,129,0.4)',
                     }}
                   >
                     {(activeUser.full_name || activeUser.username) ? (activeUser.full_name || activeUser.username)[0].toUpperCase() : 'U'}
@@ -111,7 +111,7 @@ function Navbar({ user, onLogout }) {
                     <div className="text-xs font-semibold text-white capitalize truncate max-w-[100px]">
                       {activeUser.role === 'doctor' ? 'Dr. ' : ''}{activeUser.full_name || activeUser.username}
                     </div>
-                    <div className="text-[9px] text-cyan-500/70 uppercase tracking-wider font-mono mt-0.5">{activeUser.role}</div>
+                    <div className="text-[9px] text-emerald-500/70 uppercase tracking-wider font-mono mt-0.5">{activeUser.role}</div>
                   </div>
                 </div>
 
@@ -130,7 +130,7 @@ function Navbar({ user, onLogout }) {
                 to="/login"
                 className="btn-primary text-sm px-5 py-2"
                 style={{
-                  background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
+                  background: 'linear-gradient(135deg, #10b981 0%, #0284c7 100%)',
                   borderRadius: '0.75rem',
                   padding: '0.5rem 1.25rem',
                 }}

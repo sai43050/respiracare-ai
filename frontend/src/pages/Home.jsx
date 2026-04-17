@@ -28,8 +28,8 @@ export default function Home({ user }) {
 
       {/* Cinematic Spotlight Background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden bg-[#030303]">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-cyan-500/20 rounded-[100%] blur-[120px] mix-blend-screen opacity-60 animate-pulse-slow" />
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-violet-600/20 rounded-[100%] blur-[80px] mix-blend-screen opacity-40" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-emerald-500/20 rounded-[100%] blur-[120px] mix-blend-screen opacity-60 animate-pulse-slow" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-sky-500/20 rounded-[100%] blur-[80px] mix-blend-screen opacity-40" />
 
         {/* Dense Micro Grid */}
         <div className="absolute inset-0 opacity-[0.03]"
@@ -61,8 +61,8 @@ export default function Home({ user }) {
             }}
           >
             <div className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400 shadow-[0_0_10px_#22d3ee]" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400 shadow-[0_0_10px_#34d399]" />
             </div>
             <span className="text-[10px] font-mono font-bold text-slate-300 uppercase tracking-[0.25em]">
               Precision AI Architecture v5.0
@@ -73,15 +73,15 @@ export default function Home({ user }) {
           <h1 className="text-[clamp(2.5rem,10vw,8rem)] md:text-[clamp(4rem,12vw,9rem)] font-display font-black text-white mb-6 tracking-tighter leading-[0.85] w-full max-w-full px-2" style={{ wordBreak: 'keep-all' }}>
             {user ? (
               <>
-                <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-500">PROACTIVE</span> <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500 uppercase block tracking-tighter drop-shadow-[0_0_40px_rgba(34,211,238,0.2)]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400">PROACTIVE</span> <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400 uppercase block tracking-tighter drop-shadow-[0_0_40px_rgba(52,211,153,0.3)]">
                   HEALTHCARE
                 </span>
               </>
             ) : (
               <>
-                <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-500">NEXT-GEN</span> <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500 uppercase block tracking-tighter drop-shadow-[0_0_40px_rgba(34,211,238,0.2)]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400">NEXT-GEN</span> <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400 uppercase block tracking-tighter drop-shadow-[0_0_40px_rgba(52,211,153,0.3)]">
                   LUNG AI
                 </span>
               </>
@@ -113,8 +113,8 @@ export default function Home({ user }) {
                   to="/patient-dashboard"
                   className="group inline-flex items-center px-8 py-4 text-white font-bold rounded-2xl transition-all duration-300 text-sm relative overflow-hidden"
                   style={{
-                    background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
-                    boxShadow: '0 0 30px rgba(6,182,212,0.4), 0 4px 20px rgba(0,0,0,0.3)',
+                    background: 'linear-gradient(135deg, #10b981 0%, #0284c7 100%)',
+                    boxShadow: '0 0 30px rgba(16,185,129,0.4), 0 4px 20px rgba(0,0,0,0.3)',
                   }}
                 >
                   <span className="relative z-10 flex items-center gap-2">
@@ -132,10 +132,10 @@ export default function Home({ user }) {
                     border: '1px solid rgba(255,255,255,0.1)',
                     backdropFilter: 'blur(12px)',
                   }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(6,182,212,0.4)'}
+                  onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(16,185,129,0.4)'}
                   onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
                 >
-                  <Activity className="mr-2 h-4 w-4 text-cyan-400" />
+                  <Activity className="mr-2 h-4 w-4 text-emerald-400" />
                   New Analysis
                 </Link>
               </>
@@ -145,8 +145,8 @@ export default function Home({ user }) {
                   to="/upload"
                   className="group inline-flex items-center px-8 py-4 text-white font-bold rounded-2xl transition-all duration-300 text-sm relative overflow-hidden"
                   style={{
-                    background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
-                    boxShadow: '0 0 30px rgba(6,182,212,0.4), 0 4px 20px rgba(0,0,0,0.3)',
+                    background: 'linear-gradient(135deg, #10b981 0%, #0284c7 100%)',
+                    boxShadow: '0 0 30px rgba(16,185,129,0.4), 0 4px 20px rgba(0,0,0,0.3)',
                   }}
                 >
                   <span className="relative z-10 flex items-center gap-2">
@@ -164,10 +164,10 @@ export default function Home({ user }) {
                     border: '1px solid rgba(255,255,255,0.1)',
                     backdropFilter: 'blur(12px)',
                   }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.4)'}
+                  onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(2,132,199,0.4)'}
                   onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
                 >
-                  <HeartPulse className="mr-2 h-4 w-4 text-violet-400" />
+                  <HeartPulse className="mr-2 h-4 w-4 text-sky-400" />
                   Sign In
                 </Link>
               </>
@@ -182,9 +182,9 @@ export default function Home({ user }) {
             className="mt-12 flex justify-center gap-8 text-xs font-mono"
           >
             {[
-              { label: 'ACCURACY', value: '94.2%', color: '#22d3ee' },
-              { label: 'UPTIME', value: '99.9%', color: '#34d399' },
-              { label: 'LATENCY', value: '<200ms', color: '#a78bfa' },
+              { label: 'ACCURACY', value: '94.2%', color: '#34d399' },
+              { label: 'UPTIME', value: '99.9%', color: '#38bdf8' },
+              { label: 'LATENCY', value: '<200ms', color: '#fb923c' },
             ].map(stat => (
               <div key={stat.label} className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: stat.color }} />
@@ -199,30 +199,30 @@ export default function Home({ user }) {
       {/* Feature Cards */}
       <section className="grid md:grid-cols-3 gap-5 w-full max-w-5xl px-4 relative z-10">
         <FeatureCard
-          icon={<Zap className="h-6 w-6" style={{ color: '#22d3ee' }} />}
-          iconBg="rgba(6,182,212,0.12)"
-          iconBorder="rgba(6,182,212,0.25)"
-          glowColor="rgba(6,182,212,0.15)"
+          icon={<Zap className="h-6 w-6" style={{ color: '#34d399' }} />}
+          iconBg="rgba(52,211,153,0.12)"
+          iconBorder="rgba(52,211,153,0.25)"
+          glowColor="rgba(52,211,153,0.15)"
           title="Instant X-Ray AI"
           description="Clinical DenseNet-121 analyzes chest X-rays in under a second with GradCAM heatmaps."
           tag="Vision AI"
           delay={0.1}
         />
         <FeatureCard
-          icon={<Activity className="h-6 w-6" style={{ color: '#a78bfa' }} />}
-          iconBg="rgba(139,92,246,0.12)"
-          iconBorder="rgba(139,92,246,0.25)"
-          glowColor="rgba(139,92,246,0.15)"
+          icon={<Activity className="h-6 w-6" style={{ color: '#38bdf8' }} />}
+          iconBg="rgba(56,189,248,0.12)"
+          iconBorder="rgba(56,189,248,0.25)"
+          glowColor="rgba(56,189,248,0.15)"
           title="Cough Analyzer"
           description="ResNet18 audio model classifies cough patterns to detect COVID-19 and respiratory illness."
           tag="Audio AI"
           delay={0.25}
         />
         <FeatureCard
-          icon={<ShieldCheck className="h-6 w-6" style={{ color: '#34d399' }} />}
-          iconBg="rgba(52,211,153,0.12)"
-          iconBorder="rgba(52,211,153,0.25)"
-          glowColor="rgba(52,211,153,0.15)"
+          icon={<ShieldCheck className="h-6 w-6" style={{ color: '#fb923c' }} />}
+          iconBg="rgba(251,146,60,0.12)"
+          iconBorder="rgba(251,146,60,0.25)"
+          glowColor="rgba(251,146,60,0.15)"
           title="Live Monitoring"
           description="Real-time SpO2, heart rate & respiratory tracking with AI-driven critical alerts."
           tag="IoT + ML"
@@ -242,10 +242,10 @@ export default function Home({ user }) {
           backdropFilter: 'blur(16px)',
         }}
       >
-        <Wifi className="h-3 w-3 text-cyan-400" />
+        <Wifi className="h-3 w-3 text-emerald-400" />
         <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">System Online</span>
         <span className="w-px h-3 bg-slate-700" />
-        <Cpu className="h-3 w-3 text-violet-400" />
+        <Cpu className="h-3 w-3 text-sky-400" />
         <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Neural Engine Active</span>
         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-1" />
       </motion.div>
@@ -268,7 +268,7 @@ function FeatureCard({ icon, iconBg, iconBorder, glowColor, title, description, 
         transition: 'all 0.35s cubic-bezier(0.4,0,0.2,1)',
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.borderColor = 'rgba(6,182,212,0.25)';
+        e.currentTarget.style.borderColor = 'rgba(52,211,153,0.25)';
         e.currentTarget.style.boxShadow = `0 20px 40px rgba(0,0,0,0.5), 0 0 30px ${glowColor}`;
       }}
       onMouseLeave={e => {
@@ -278,7 +278,7 @@ function FeatureCard({ icon, iconBg, iconBorder, glowColor, title, description, 
     >
       {/* Top shimmer line on hover */}
       <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(6,182,212,0.6), transparent)' }} />
+        style={{ background: 'linear-gradient(90deg, transparent, rgba(52,211,153,0.6), transparent)' }} />
 
       {/* Icon */}
       <div
