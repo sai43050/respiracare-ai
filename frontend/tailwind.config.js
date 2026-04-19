@@ -19,40 +19,40 @@ export default {
           mid: '#111d35',
           light: '#162245',
         },
-        // Health/Medical Accent (Teal)
+        // Health/Medical Accent (Indigo)
         medical: {
-          400: '#00e6c0',
-          DEFAULT: '#00c9a7',
-          600: '#00b396',
+          400: '#818cf8',
+          DEFAULT: '#6366f1',
+          600: '#4f46e5',
         },
-        // Clinical Blue
+        // Clinical Orchid/Violet
         clinical: {
-          400: '#5ea2f9',
-          DEFAULT: '#3d8ef8',
-          600: '#2a7de5',
+          400: '#d946ef',
+          DEFAULT: '#a855f7',
+          600: '#9333ea',
         },
         // Warning/Alert colors
         alert: {
           rose: '#e05c6f',
           amber: '#f5a623',
-          emerald: '#00c9a7',
+          emerald: '#10b981',
           crit: '#ff3d71',
         },
-        // Legacy compatibility
+        // Legacy compatibility - now redirected to medical/clinical
         navy: {
           950: '#030712',
           900: '#070d1a',
           850: '#0a1221',
           800: '#0d1a2d',
-          700: '#122040',
-          600: '#1a2f5a',
+          700: '#1e1b4b', // Deep indigo
+          600: '#312e81',
         },
-        // Vibrant Teal/Cyan accent
+        // Vibrant Indigo/Violet accent (replacing Cyan)
         cyan: {
-          300: '#67e8f9',
-          400: '#22d3ee',
-          500: '#06b6d4',
-          600: '#0891b2',
+          300: '#a5b4fc',
+          400: '#818cf8',
+          500: '#6366f1',
+          600: '#4f46e5',
         },
         // Electric Violet
         violet: {
@@ -79,16 +79,16 @@ export default {
         },
         // Legacy compatibility
         vignan: {
-          50: '#f2f4fb',
-          100: '#e1e7f6',
-          200: '#c7d3ed',
-          300: '#9cb5df',
-          400: '#6a8dce',
-          500: '#466dbf',
-          600: '#3452ab',
-          700: '#2c428a',
-          800: '#004792',
-          900: '#070d1a',
+          50: '#f5f3ff',
+          100: '#ede9fe',
+          200: '#ddd6fe',
+          300: '#c4b5fd',
+          400: '#a78bfa',
+          500: '#8b5cf6',
+          600: '#7c3aed',
+          700: '#6d28d9',
+          800: '#5b21b6',
+          900: '#4c1d95',
         },
         healthcare: {
           50: '#f8f6fb',
@@ -103,14 +103,14 @@ export default {
           900: '#451e63',
         },
         accent: {
-          300: '#67e8f9',
-          400: '#22d3ee',
-          500: '#06b6d4',
+          300: '#a5b4fc',
+          400: '#818cf8',
+          500: '#6366f1',
         }
       },
       backgroundImage: {
         'grid-pattern': "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 255 255 / 0.04)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e\")",
-        'radial-glow': 'radial-gradient(ellipse at center, rgba(6,182,212,0.15) 0%, transparent 70%)',
+        'radial-glow': 'radial-gradient(ellipse at center, rgba(99,102,241,0.15) 0%, transparent 70%)',
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',
@@ -127,8 +127,8 @@ export default {
           '50%': { transform: 'translateY(-12px)' },
         },
         glow: {
-          '0%': { boxShadow: '0 0 15px rgba(6,182,212,0.3), 0 0 30px rgba(6,182,212,0.1)' },
-          '100%': { boxShadow: '0 0 30px rgba(6,182,212,0.6), 0 0 60px rgba(6,182,212,0.2)' },
+          '0%': { boxShadow: '0 0 15px rgba(99,102,241,0.3), 0 0 30px rgba(99,102,241,0.1)' },
+          '100%': { boxShadow: '0 0 30px rgba(99,102,241,0.6), 0 0 60px rgba(99,102,241,0.2)' },
         },
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
@@ -148,13 +148,13 @@ export default {
         },
       },
       boxShadow: {
-        'glow-cyan': '0 0 20px rgba(6,182,212,0.4), 0 0 60px rgba(6,182,212,0.15)',
+        'glow-cyan': '0 0 20px rgba(99,102,241,0.4), 0 0 60px rgba(99,102,241,0.15)',
         'glow-violet': '0 0 20px rgba(139,92,246,0.4), 0 0 60px rgba(139,92,246,0.15)',
-        'glow-emerald': '0 0 20px rgba(52,211,153,0.4), 0 0 60px rgba(52,211,153,0.15)',
-        'glow-rose': '0 0 20px rgba(251,113,133,0.4), 0 0 60px rgba(251,113,133,0.15)',
-        'inner-glow': 'inset 0 0 30px rgba(6,182,212,0.05)',
+        'glow-emerald': '0 0 20px rgba(16,185,129,0.4), 0 0 60px rgba(16,185,129,0.15)',
+        'glow-rose': '0 0 20px rgba(244,63,94,0.4), 0 0 60px rgba(244,63,94,0.15)',
+        'inner-glow': 'inset 0 0 30px rgba(99,102,241,0.05)',
         'card': '0 4px 6px -1px rgba(0,0,0,0.5), 0 2px 4px -2px rgba(0,0,0,0.3)',
-        'card-hover': '0 20px 40px -8px rgba(0,0,0,0.6), 0 0 0 1px rgba(6,182,212,0.2)',
+        'card-hover': '0 20px 40px -8px rgba(0,0,0,0.6), 0 0 0 1px rgba(99,102,241,0.2)',
       },
       borderRadius: {
         '4xl': '2rem',

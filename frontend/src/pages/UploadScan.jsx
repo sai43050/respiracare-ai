@@ -58,7 +58,12 @@ export default function UploadScan({ user }) {
       showToast("Scan analyzed successfully!", "success");
       navigate(`/results/${result.id}`, { state: { result } });
     } catch (err) {
-      const msg = err.response?.data?.detail || "Failed to process the scan. Our neural servers might be under high load.";
+      let msg;
+      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        msg = "The AI server is warming up (Railway cold start). Please wait 30 seconds and try again.";
+      } else {
+        msg = err.response?.data?.detail || "Failed to process the scan. The server may be restarting — please try again in a moment.";
+      }
       setError(msg);
       showToast("Analysis failed.", "error");
       console.error(err);
@@ -70,7 +75,7 @@ export default function UploadScan({ user }) {
   return (
     <div className="max-w-4xl mx-auto pt-10 pb-20 relative z-10 px-4">
       {/* Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none" />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -78,7 +83,7 @@ export default function UploadScan({ user }) {
         className="glass-panel p-8 sm:p-12 rounded-[2.5rem] relative overflow-hidden"
       >
         {/* Top Shimmer */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent" />
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
@@ -110,8 +115,8 @@ export default function UploadScan({ user }) {
         <div 
           className={`relative border-2 border-dashed rounded-[2rem] p-4 text-center transition-all duration-500 group ${
             file 
-              ? 'border-cyan-500/40 bg-cyan-500/5' 
-              : 'border-white/10 hover:border-cyan-500/40 hover:bg-white/5'
+              ? 'border-indigo-500/40 bg-indigo-500/5' 
+              : 'border-white/10 hover:border-indigo-500/40 hover:bg-white/5'
           }`}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
@@ -160,8 +165,8 @@ export default function UploadScan({ user }) {
                 </div>
               </div>
 
-              <div className="mt-6 flex items-center gap-3 px-5 py-2.5 rounded-2xl bg-cyan-500/10 border border-cyan-500/20">
-                <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+              <div className="mt-6 flex items-center gap-3 px-5 py-2.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20">
+                <div className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
                 <span className="text-xs font-mono font-bold text-white tracking-widest uppercase">
                   Sequence Ready: {file.name.length > 25 ? file.name.substring(0, 22) + '...' : file.name}
                 </span>
@@ -218,7 +223,7 @@ export default function UploadScan({ user }) {
       {/* Info Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
          {[
-           { title: 'Privacy First', desc: 'Secure local processing and encryption.', icon: ShieldCheck, color: 'text-cyan-400' },
+           { title: 'Privacy First', desc: 'Secure local processing and encryption.', icon: ShieldCheck, color: 'text-indigo-400' },
            { title: 'Global Precision', desc: 'Trained on 100k+ clinical images.', icon: Zap, color: 'text-violet-400' },
            { title: 'Real-time', desc: 'Results in under 2 seconds.', icon: Loader2, color: 'text-emerald-400' }
          ].map(card => (

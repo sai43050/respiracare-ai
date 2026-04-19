@@ -70,18 +70,18 @@ export default function Home({ user }) {
           </motion.div>
 
           {/* Headline */}
-          <h1 className="text-[clamp(2.5rem,10vw,8rem)] md:text-[clamp(4rem,12vw,9rem)] font-display font-black text-white mb-6 tracking-tighter leading-[0.85] w-full max-w-full px-2" style={{ wordBreak: 'keep-all' }}>
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-black text-white mb-6 tracking-tighter leading-[0.95] w-full max-w-full text-center px-4">
             {user ? (
               <>
-                <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400">PROACTIVE</span> <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400 uppercase block tracking-tighter drop-shadow-[0_0_40px_rgba(52,211,153,0.3)]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400 block mb-2">PROACTIVE</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-orchid-400 uppercase block tracking-tighter drop-shadow-[0_0_30px_rgba(129,140,248,0.2)]">
                   HEALTHCARE
                 </span>
               </>
             ) : (
               <>
-                <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400">NEXT-GEN</span> <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400 uppercase block tracking-tighter drop-shadow-[0_0_40px_rgba(52,211,153,0.3)]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400 block mb-2">NEXT-GEN</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-orchid-400 uppercase block tracking-tighter drop-shadow-[0_0_30px_rgba(129,140,248,0.2)]">
                   LUNG AI
                 </span>
               </>

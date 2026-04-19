@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api'
+  baseURL: '/api',
+  timeout: 90000, // 90 second global timeout - Railway needs time to warm up
 });
 
 // Add interceptor to append JWT
@@ -83,6 +84,7 @@ export const predictScan = async (userId, file) => {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
+    timeout: 120000, // 120s for AI inference - DenseNet model load can be slow on cold start
   });
   return response.data;
 };

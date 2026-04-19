@@ -12,6 +12,8 @@ from sqlalchemy.orm import Session
 import models as db_models
 import database
 import os
+from dotenv import load_dotenv
+load_dotenv()
 import shutil
 import io
 import math

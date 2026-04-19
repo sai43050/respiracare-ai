@@ -1,5 +1,6 @@
-import os
 import json
+from dotenv import load_dotenv
+load_dotenv()
 
 # Try importing the new Google GenAI library
 try:
