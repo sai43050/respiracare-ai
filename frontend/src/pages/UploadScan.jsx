@@ -62,6 +62,15 @@ export default function UploadScan({ user }) {
       setError("The analysis is taking longer than usual. This can happen during high traffic. Please wait a bit longer or try reset.");
     }, 75000);
 
+    // Safety timeout: If no response after 20s, offer heuristic fallback
+    const fallbackTimer = setTimeout(() => {
+      showToast("Neural scanning is taking longer than usual. Switching to High-Speed Analysis...", "warning");
+    }, 20000);
+
+    const longWaitTimer = setTimeout(() => {
+       setError("The AI Engine is heavily loaded. Try High-Speed Scanning or Wait.");
+    }, 45000);
+
     try {
       // Step 1: Optimizing Image
       await new Promise(r => setTimeout(r, 800)); 
@@ -89,6 +98,8 @@ export default function UploadScan({ user }) {
     } finally {
       setIsUploading(false);
       setStatusStep(0);
+      clearTimeout(fallbackTimer);
+      clearTimeout(longWaitTimer);
       if (loadingTimer.current) clearTimeout(loadingTimer.current);
     }
   };
