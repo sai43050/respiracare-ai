@@ -441,33 +441,40 @@ async def predict_scan(
         
     with open(file_path, "wb") as buffer:
         buffer.write(image_bytes)
-    
-    result = predict_real_image(image_bytes, file.filename)
-    
-    scan_record = db_models.ScanRecord(
-        user_id=user.id,
-        image_path=file_path,
-        prediction=f"{result['prediction']}",
-        confidence=result['confidence'],
-        gradcam_data=result.get("gradcam", ""),
-        findings=json.dumps(result.get("findings", [])),
-        suggestions=json.dumps(result.get("suggestions", []))
-    )
-    db.add(scan_record)
-    db.commit()
-    db.refresh(scan_record)
-    
-    return {
-        "id": scan_record.id,
-        "prediction": scan_record.prediction,
-        "confidence": scan_record.confidence,
-        "image_path": scan_record.image_path,
-        "timestamp": scan_record.timestamp,
-        "modality": "image",
-        "gradcam": result.get("gradcam", ""),
-        "findings": result.get("findings", []),
-        "suggestions": result.get("suggestions", [])
-    }
+    try:
+        result = predict_real_image(image_bytes, file.filename)
+        
+        scan_record = db_models.ScanRecord(
+            user_id=user.id,
+            image_path=file_path,
+            prediction=f"{result['prediction']}",
+            confidence=result['confidence'],
+            gradcam_data=result.get("gradcam", ""),
+            findings=json.dumps(result.get("findings", [])),
+            suggestions=json.dumps(result.get("suggestions", []))
+        )
+        db.add(scan_record)
+        db.commit()
+        db.refresh(scan_record)
+        
+        return {
+            "id": scan_record.id,
+            "prediction": scan_record.prediction,
+            "confidence": scan_record.confidence,
+            "image_path": scan_record.image_path,
+            "timestamp": scan_record.timestamp,
+            "modality": "image",
+            "gradcam": result.get("gradcam", ""),
+            "findings": result.get("findings", []),
+            "suggestions": result.get("suggestions", [])
+        }
+    except Exception as e:
+        print(f"CRITICAL: Diagnostic Engine Failure: {e}")
+        db.rollback()
+        raise HTTPException(
+            status_code=500, 
+            detail="The AI Diagnostic Engine encountered a temporary processing error. Please try again in 30 seconds."
+        )
 
 @app.post("/api/predict/audio")
 async def predict_audio(

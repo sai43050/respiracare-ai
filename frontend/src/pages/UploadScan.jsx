@@ -58,15 +58,17 @@ export default function UploadScan({ user }) {
       showToast("Scan analyzed successfully!", "success");
       navigate(`/results/${result.id}`, { state: { result } });
     } catch (err) {
+      console.error("DIAGNOSTIC FAULT:", err);
       let msg;
-      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+      if (err.response && err.response.status === 401) {
+        msg = "Session expired. Please log in again to analyze clinical scans.";
+      } else if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
         msg = "The AI server is warming up (Railway cold start). Please wait 30 seconds and try again.";
       } else {
         msg = err.response?.data?.detail || "Failed to process the scan. The server may be restarting — please try again in a moment.";
       }
       setError(msg);
       showToast("Analysis failed.", "error");
-      console.error(err);
     } finally {
       setIsUploading(false);
     }

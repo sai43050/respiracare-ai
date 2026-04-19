@@ -28,8 +28,8 @@ export default function Home({ user }) {
 
       {/* Cinematic Spotlight Background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden bg-[#030303]">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-emerald-500/20 rounded-[100%] blur-[120px] mix-blend-screen opacity-60 animate-pulse-slow" />
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-sky-500/20 rounded-[100%] blur-[80px] mix-blend-screen opacity-40" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-indigo-500/20 rounded-[100%] blur-[120px] mix-blend-screen opacity-60 animate-pulse-slow" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-violet-600/20 rounded-[100%] blur-[80px] mix-blend-screen opacity-40" />
 
         {/* Dense Micro Grid */}
         <div className="absolute inset-0 opacity-[0.03]"
@@ -61,8 +61,8 @@ export default function Home({ user }) {
             }}
           >
             <div className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400 shadow-[0_0_10px_#34d399]" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-400 shadow-[0_0_10px_#818cf8]" />
             </div>
             <span className="text-[10px] font-mono font-bold text-slate-300 uppercase tracking-[0.25em]">
               Precision AI Architecture v5.0
@@ -70,18 +70,18 @@ export default function Home({ user }) {
           </motion.div>
 
           {/* Headline */}
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-black text-white mb-6 tracking-tighter leading-[0.95] w-full max-w-full text-center px-4">
+          <h1 className="text-5xl md:text-6xl lg:text-6xl font-display font-black text-white mb-6 tracking-tight leading-[0.95] w-full max-w-full text-center px-4">
             {user ? (
               <>
                 <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400 block mb-2">PROACTIVE</span>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-orchid-400 uppercase block tracking-tighter drop-shadow-[0_0_30px_rgba(129,140,248,0.2)]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-orchid-400 uppercase block tracking-tight drop-shadow-[0_0_30px_rgba(129,140,248,0.2)]">
                   HEALTHCARE
                 </span>
               </>
             ) : (
               <>
                 <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400 block mb-2">NEXT-GEN</span>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-orchid-400 uppercase block tracking-tighter drop-shadow-[0_0_30px_rgba(129,140,248,0.2)]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-orchid-400 uppercase block tracking-tight drop-shadow-[0_0_30px_rgba(129,140,248,0.2)]">
                   LUNG AI
                 </span>
               </>
