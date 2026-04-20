@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: 'https://sai43050-lung-whisperer-engine.hf.space/api',
-  timeout: 120000, 
+  timeout: 180000, 
 });
 
 // Add interceptor to append JWT

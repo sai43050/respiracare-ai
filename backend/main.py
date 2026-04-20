@@ -3,6 +3,7 @@ print(f"NumPy Version: {np.__version__}")
 import matplotlib
 matplotlib.use('Agg')
 
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends, UploadFile, File, Form, HTTPException, status
 from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -48,7 +49,29 @@ import json
 # Create Tables
 db_models.Base.metadata.create_all(bind=database.engine)
 
-app = FastAPI(title="Lung Whisperer API")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # --- Startup: Eagerly pre-warm AI Models ---
+    print("LIFESPAN: Preparing High-Performance AI Engine (16GB Mode)...")
+    try:
+        # Load into module-level globals for route accessibility
+        get_image_models()
+        get_audio_models()
+        print(f"LIFESPAN: Models loaded. Image: {len(image_ensemble)}, Audio: {len(audio_ensemble)}")
+        app.state.models_ready = True
+    except Exception as e:
+        print(f"LIFESPAN CRITICAL ERROR: Failed to pre-warm engine: {e}")
+        app.state.models_ready = False
+    
+    yield
+    
+    # --- Shutdown ---
+    print("LIFESPAN: Shutting down AI Engine...")
+    image_ensemble.clear()
+    audio_ensemble.clear()
+    gc.collect()
+
+app = FastAPI(title="Lung Whisperer API", lifespan=lifespan)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 @app.get("/")
@@ -60,9 +83,9 @@ def read_root():
 def health_check():
     return {
         "status": "healthy", 
-        "version": "1.0.5", 
+        "version": "1.0.6", 
         "engine": "Hybrid-Free-16GB-RAM",
-        "models_ready": len(image_ensemble) > 0 and len(audio_ensemble) > 0,
+        "lifespan_initialized": getattr(app.state, "models_ready", False),
         "image_models": len(image_ensemble),
         "audio_models": len(audio_ensemble),
         "numpy": np.__version__
@@ -902,13 +925,5 @@ def get_breathing_history(current_user: db_models.User = Depends(get_current_use
 
 if __name__ == "__main__":
     import uvicorn
-    # Eagerly warm up the models at the very end of module load
-    print("Pre-warming AI Engine (Eager Loading)...")
-    get_image_models()
-    get_audio_models()
-    uvicorn.run(app, host="0.0.0.0", port=7860)
-else:
-    # Warm up models if running via Gunicorn/Uvicorn-as-worker
-    print("Pre-warming AI Engine (Production Worker)...")
-    get_image_models()
-    get_audio_models()
+    # When running directly, uvicorn will trigger the lifespan context
+    uvicorn.run("main:app", host="0.0.0.0", port=7860, reload=False)
