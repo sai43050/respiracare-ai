@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api',
-  timeout: 90000, // 90 second global timeout - Railway needs time to warm up
+  baseURL: 'https://sai43050-lung-whisperer-engine.hf.space/api',
+  timeout: 120000, 
 });
 
 // Add interceptor to append JWT
