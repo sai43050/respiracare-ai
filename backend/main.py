@@ -60,9 +60,11 @@ def read_root():
 def health_check():
     return {
         "status": "healthy", 
-        "version": "1.0.4", 
-        "models_loaded": len(image_ensemble) > 0,
-        "audio_loaded": len(audio_ensemble) > 0,
+        "version": "1.0.5", 
+        "engine": "Hybrid-Free-16GB-RAM",
+        "models_ready": len(image_ensemble) > 0 and len(audio_ensemble) > 0,
+        "image_models": len(image_ensemble),
+        "audio_models": len(audio_ensemble),
         "numpy": np.__version__
     }
 
@@ -897,3 +899,16 @@ def log_breathing_session(req: BreathingSessionCreate, current_user: db_models.U
 def get_breathing_history(current_user: db_models.User = Depends(get_current_user), db: Session = Depends(database.get_db)):
     sessions = db.query(db_models.BreathingSession).filter(db_models.BreathingSession.user_id == current_user.id).all()
     return sessions
+
+if __name__ == "__main__":
+    import uvicorn
+    # Eagerly warm up the models at the very end of module load
+    print("Pre-warming AI Engine (Eager Loading)...")
+    get_image_models()
+    get_audio_models()
+    uvicorn.run(app, host="0.0.0.0", port=7860)
+else:
+    # Warm up models if running via Gunicorn/Uvicorn-as-worker
+    print("Pre-warming AI Engine (Production Worker)...")
+    get_image_models()
+    get_audio_models()
