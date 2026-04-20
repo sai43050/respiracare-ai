@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: lung-whisperer-backend
+    env: python
+    rootDir: backend
+    buildCommand: |
+      apt-get update && apt-get install -y libgl1 libglib2.0-0 libpq-dev gcc
+      pip install --no-cache-dir "numpy==1.26.4"
+      pip install --no-cache-dir torch==2.2.2+cpu torchvision==0.17.2+cpu torchaudio==2.2.2+cpu --extra-index-url https://download.pytorch.org/whl/cpu
+      pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    plan: standard # Recommended for heavy AI models
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: lung-whisperer-db
+          property: connectionString
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: PORT
+        value: 8000
+
+databases:
+  - name: lung-whisperer-db
+    plan: free # Can be upgraded later
+    databaseName: lungwhisperer
+    user: admin

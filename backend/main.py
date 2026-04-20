@@ -52,7 +52,13 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 @app.get("/api/health")
 def health_check():
-    return {"status": "healthy", "version": "1.0.3", "numpy": np.__version__}
+    return {
+        "status": "healthy", 
+        "version": "1.0.4", 
+        "models_loaded": len(image_ensemble) > 0,
+        "audio_loaded": len(audio_ensemble) > 0,
+        "numpy": np.__version__
+    }
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(database.get_db)):
     credentials_exception = HTTPException(
@@ -93,18 +99,18 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 image_ensemble = []
 
-def load_image_models():
-    try:
-        # Load pre-trained Clinical DenseNet121 from TorchXRayVision
-        m1 = xrv.models.DenseNet(weights="densenet121-res224-all")
-        m1 = m1.to(device)
-        m1.eval()
-        image_ensemble.append(m1)
-        print("Loaded TorchXRayVision Clinical DenseNet-121!")
-    except Exception as e:
-        print(f"Failed to load clinical image models: {e}")
-
-load_image_models()
+def get_image_models():
+    if not image_ensemble:
+        try:
+            # Load pre-trained Clinical DenseNet121 from TorchXRayVision
+            m1 = xrv.models.DenseNet(weights="densenet121-res224-all")
+            m1 = m1.to(device)
+            m1.eval()
+            image_ensemble.append(m1)
+            print("Loaded TorchXRayVision Clinical DenseNet-121!")
+        except Exception as e:
+            print(f"Failed to load clinical image models: {e}")
+    return image_ensemble
 
 def generate_gradcam_b64(model, tensor, target_idx=None):
     try:
@@ -181,7 +187,8 @@ def predict_heuristic(image_bytes: bytes) -> dict:
         return {"prediction": "Analysis Error", "confidence": 0.0, "findings": ["Error analyzing image pixels"], "suggestions": [], "gradcam": ""}
 
 def predict_real_image(image_bytes: bytes, filename: str = "") -> dict:
-    if not image_ensemble:
+    models = get_image_models()
+    if not models:
         return {"prediction": "Normal", "confidence": 50.0}
 
     image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
@@ -266,40 +273,41 @@ AUDIO_CLASSES_PATH = "audio_classes.txt"
 audio_ensemble = []
 audio_classes = ["healthy", "COVID-19", "symptomatic"] # Fallback
 
-def load_audio_models():
+def get_audio_models():
     global audio_classes
-    if not os.path.exists(AUDIO_CLASSES_PATH):
-        return
-        
-    with open(AUDIO_CLASSES_PATH, "r") as f:
-        audio_classes = f.read().split(",")
-    num_classes = len(audio_classes)
-        
-    try:
-        if os.path.exists(AUDIO_MODEL1_PATH):
-            m1 = tv_models.resnet18(pretrained=False)
-            m1.fc = nn.Linear(m1.fc.in_features, num_classes)
-            m1.load_state_dict(torch.load(AUDIO_MODEL1_PATH, map_location=device))
-            m1 = m1.to(device)
-            m1.eval()
-            audio_ensemble.append(m1)
-            print("Loaded ResNet18 Audio Model")
+    if not audio_ensemble:
+        if not os.path.exists(AUDIO_CLASSES_PATH):
+            return []
+            
+        with open(AUDIO_CLASSES_PATH, "r") as f:
+            audio_classes = f.read().split(",")
+        num_classes = len(audio_classes)
+            
+        try:
+            if os.path.exists(AUDIO_MODEL1_PATH):
+                m1 = tv_models.resnet18(pretrained=False)
+                m1.fc = nn.Linear(m1.fc.in_features, num_classes)
+                m1.load_state_dict(torch.load(AUDIO_MODEL1_PATH, map_location=device))
+                m1 = m1.to(device)
+                m1.eval()
+                audio_ensemble.append(m1)
+                print("Loaded ResNet18 Audio Model")
 
-        if os.path.exists(AUDIO_MODEL2_PATH):
-            m2 = tv_models.mobilenet_v3_small(pretrained=False)
-            m2.classifier[3] = nn.Linear(m2.classifier[3].in_features, num_classes)
-            m2.load_state_dict(torch.load(AUDIO_MODEL2_PATH, map_location=device))
-            m2 = m2.to(device)
-            m2.eval()
-            audio_ensemble.append(m2)
-            print("Loaded MobileNetV3 Audio Model")
-    except Exception as e:
-        print(f"Failed to load audio models: {e}")
-
-load_audio_models()
+            if os.path.exists(AUDIO_MODEL2_PATH):
+                m2 = tv_models.mobilenet_v3_small(pretrained=False)
+                m2.classifier[3] = nn.Linear(m2.classifier[3].in_features, num_classes)
+                m2.load_state_dict(torch.load(AUDIO_MODEL2_PATH, map_location=device))
+                m2 = m2.to(device)
+                m2.eval()
+                audio_ensemble.append(m2)
+                print("Loaded MobileNetV3 Audio Model")
+        except Exception as e:
+            print(f"Failed to load audio models: {e}")
+    return audio_ensemble
 
 def predict_real_audio(file_path: str) -> dict:
-    if not audio_ensemble:
+    models = get_audio_models()
+    if not models:
         return {"prediction": "healthy", "confidence": 50.0}
         
     try:
@@ -486,7 +494,8 @@ async def predict_scan(
         buffer.write(image_bytes)
     
     try:
-        if mode == "neural" and image_ensemble:
+        models = get_image_models()
+        if mode == "neural" and models:
             result = predict_real_image(image_bytes, file.filename)
             actual_engine = "neural"
         else:
