@@ -93,7 +93,7 @@ def read_root():
 def health_check():
     return {
         "status": "healthy", 
-        "version": "1.0.6", 
+        "version": "1.0.9-ULTRA-SYNC", 
         "engine": "Hybrid-Free-16GB-RAM",
         "lifespan_initialized": getattr(app.state, "models_ready", False),
         "image_models": len(image_ensemble),
