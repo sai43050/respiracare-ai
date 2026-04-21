@@ -110,6 +110,20 @@ export const predictAudio = async (userId, file) => {
   return response.data;
 };
 
+export const predictScanFast = async (userId, file) => {
+  const formData = new FormData();
+  formData.append('user_id', userId);
+  formData.append('file', file);
+
+  const response = await api.post('predict/fast', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    timeout: 30000, // 30s max for Gemini fast track
+  });
+  return response.data;
+};
+
 export const getHistory = async (userId) => {
   const response = await api.get(`history?user_id=${userId}`);
   return response.data;
