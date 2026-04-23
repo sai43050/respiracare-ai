@@ -27,7 +27,7 @@ export default function Home({ user }) {
     <div className="flex flex-col items-center pt-20 pb-20 relative overflow-hidden min-h-screen font-sans">
 
       {/* Cinematic Spotlight Background */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden bg-[#030303]">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden bg-transparent">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-indigo-500/20 rounded-[100%] blur-[120px] mix-blend-screen opacity-60 animate-pulse-slow" />
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-violet-600/20 rounded-[100%] blur-[80px] mix-blend-screen opacity-40" />
 

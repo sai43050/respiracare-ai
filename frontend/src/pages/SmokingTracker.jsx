@@ -85,6 +85,13 @@ const SmokingTracker = () => {
   const moneySaved = Math.floor((cigsAvoided / 20) * profile.price_per_pack); 
   const lifeSaved = (cigsAvoided * 11) / 1440; 
 
+  // Dynamic Recovery Calculation (Based on 9 month / 270 day protocol)
+  const rawProgress = (days / 270) * 100;
+  const recoveryProgress = isNaN(rawProgress) ? 0 : Math.min(100, Math.max(0, rawProgress));
+  
+  const rawEff = (days / 90) * 30;
+  const efficiencyIncrease = isNaN(rawEff) ? "0.0" : (Math.min(30, rawEff)).toFixed(1); 
+
   return (
     <div className="space-y-6 pt-6 max-w-5xl mx-auto pb-24 relative z-10 px-4">
       
@@ -205,9 +212,8 @@ const SmokingTracker = () => {
                   <span className="text-3xl font-display font-bold text-emerald-400 uppercase tracking-widest">Days</span>
                 </div>
                 <div className="h-1.5 w-64 bg-white/5 rounded-full mt-4 overflow-hidden p-[1px] border border-white/5">
-                   <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: '85%' }}
+                    <motion.div 
+                    animate={{ width: `${recoveryProgress}%` }}
                     transition={{ duration: 2 }}
                     className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]" />
                 </div>
@@ -312,7 +318,7 @@ const SmokingTracker = () => {
                  <h4 className="text-2xl font-display font-black text-white tracking-tight uppercase">Lung Capacity Regeneration</h4>
                  <p className="text-emerald-100/60 text-sm font-light mt-2 max-w-3xl leading-relaxed">
                     Analyzing your cessation trajectory: Your arterial oxygen saturation has stabilized. Alveolar regeneration is in an active phase. 
-                    Calculated efficiency increase: <span className="text-white font-bold">+22.4%</span> since session start.
+                    Calculated efficiency increase: <span className="text-white font-bold">+{efficiencyIncrease}%</span> since session start.
                  </p>
               </div>
               <div className="md:ml-auto">

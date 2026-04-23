@@ -227,4 +227,11 @@ export const getBreathingHistory = async () => {
   return response.data;
 };
 
+// --- System Status APIs ---
+export const checkSystemHealth = async () => {
+  const start = Date.now();
+  const response = await api.get('health');
+  return { ...response.data, latency: Date.now() - start };
+};
+
 export default api;

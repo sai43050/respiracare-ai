@@ -89,12 +89,20 @@ const Medications = () => {
                Digital medication synchronization and adherence monitoring.
             </p>
           </div>
-          <button 
-            onClick={() => setShowAdd(!showAdd)}
-            className="flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-xl shadow-violet-950/40 transition-all active:scale-95"
-          >
-            <Plus size={18} /> Add New Entry
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button 
+              onClick={() => setShowAdd(!showAdd)}
+              className="flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-xl shadow-violet-950/40 transition-all active:scale-95"
+            >
+              <Plus size={18} /> Add New Entry
+            </button>
+            <button 
+              onClick={() => showToast("Vision AI OCR Engine Initializing...", "info")}
+              className="flex items-center gap-2 px-6 py-3.5 bg-white/5 border border-white/10 text-white font-black text-xs uppercase tracking-widest rounded-2xl transition-all active:scale-95 hover:bg-white/10 group"
+            >
+              <Activity size={16} className="text-cyan-400 group-hover:animate-pulse" /> AI OCR Scan
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">

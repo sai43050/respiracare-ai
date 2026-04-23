@@ -15,6 +15,7 @@ import Breathing from './pages/Breathing';
 import SmokingTracker from './pages/SmokingTracker';
 import WeatherAQI from './pages/WeatherAQI';
 import Medications from './pages/Medications';
+import LungAge from './pages/LungAge';
 import { getCurrentUser } from './api';
 import { ToastProvider } from './components/Toast';
 import brandLogo from './assets/hero_logo.png';
@@ -109,6 +110,7 @@ function App() {
                 <Route path="/quitsmoking" element={<ProtectedRoute><SmokingTracker /></ProtectedRoute>} />
                 <Route path="/weather" element={<ProtectedRoute><WeatherAQI /></ProtectedRoute>} />
                 <Route path="/medications" element={<ProtectedRoute><Medications /></ProtectedRoute>} />
+                <Route path="/lung-age" element={<ProtectedRoute><LungAge /></ProtectedRoute>} />
 
                 <Route path="/upload" element={<ProtectedRoute><UploadScan user={user} /></ProtectedRoute>} />
                 <Route path="/upload-audio" element={<ProtectedRoute><UploadAudio user={user} /></ProtectedRoute>} />

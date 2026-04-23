@@ -1,11 +1,29 @@
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Activity, UploadCloud, History, Info, Home, LayoutDashboard, PhoneCall, LogOut, Wind, Pill, Leaf, CloudSun, Mic } from 'lucide-react';
 import { getCurrentUser } from '../api';
 import brandLogo from '../assets/hero_logo.png';
 
+import { checkSystemHealth } from '../api';
+
 function Navbar({ user, onLogout }) {
   const location = useLocation();
   const activeUser = user || getCurrentUser();
+  const [health, setHealth] = useState({ status: 'connecting', latency: 0 });
+
+  useEffect(() => {
+    const check = async () => {
+      try {
+        const data = await checkSystemHealth();
+        setHealth({ status: data.status, latency: data.latency });
+      } catch (e) {
+        setHealth({ status: 'offline', latency: 0 });
+      }
+    };
+    check();
+    const interval = setInterval(check, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   let navLinks = [
     { name: 'Home', path: '/', icon: Home },
@@ -37,57 +55,73 @@ function Navbar({ user, onLogout }) {
   return (
     <div className="fixed top-6 left-0 right-0 z-50 flex justify-center mt-2 w-full px-4 pointer-events-none">
       <nav
-        className="rounded-full px-3 py-2 backdrop-blur-[40px] pointer-events-auto flex justify-between items-center w-full max-w-5xl"
+        className="rounded-full px-3 py-2 backdrop-blur-[40px] pointer-events-auto flex justify-between items-center w-full max-w-[95%] lg:max-w-7xl"
         style={{
           background: 'rgba(5, 5, 5, 0.4)',
           border: 'none',
           boxShadow: '0 0 0 0.5px rgba(255,255,255,0.06), 0 20px 40px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.08)',
         }}
       >
-        <div className="flex justify-between items-center w-full h-12">
+        <div className="flex items-center justify-between w-full h-12">
           {/* Typography Branding */}
-          <Link to="/" className="flex items-center space-x-3 pl-3 group">
-            <div className="hidden sm:block">
-               <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse" />
-                  <span className="font-display font-black text-xl text-white tracking-tighter">
-                    LUNG<span className="text-emerald-400 font-light">WHISPERER</span>
-                  </span>
-               </div>
-            </div>
-          </Link>
+          <div className="flex-none flex justify-start min-w-fit">
+            <Link to="/" className="flex items-center space-x-3 pl-3 group">
+              <div className="hidden sm:block">
+                 <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse" />
+                    <span className="font-display font-black text-xl text-white tracking-tighter">
+                      LUNG<span className="text-emerald-400 font-light">WHISPERER</span>
+                    </span>
+                 </div>
+              </div>
+            </Link>
+          </div>
 
           {/* Nav Links */}
-          <div className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => {
-              const Icon = link.icon;
-              const isActive = location.pathname === link.path;
-              return (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-200 ${
-                    isActive
-                      ? 'text-white'
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
-                  }`}
-                  style={isActive ? {
-                    background: 'linear-gradient(135deg, rgba(16,185,129,0.15), rgba(2,132,199,0.1))',
-                    border: '1px solid rgba(16,185,129,0.25)',
-                    boxShadow: '0 0 12px rgba(16,185,129,0.15)',
-                  } : {
-                    border: '1px solid transparent',
-                  }}
-                >
-                  <Icon className={`h-3.5 w-3.5 ${isActive ? 'text-emerald-400' : ''}`} />
-                  <span>{link.name}</span>
-                </Link>
-              );
-            })}
+          <div className="hidden md:flex flex-1 justify-center items-center gap-0.5 px-4 min-w-0">
+            <div className="flex items-center gap-0.5 overflow-x-auto custom-scrollbar">
+              {navLinks.map((link) => {
+                const Icon = link.icon;
+                const isActive = location.pathname === link.path;
+                return (
+                  <Link
+                    key={link.name}
+                    to={link.path}
+                    className={`flex items-center space-x-1 px-3 py-1.5 rounded-lg text-[10px] lg:text-xs font-semibold transition-all duration-200 whitespace-nowrap ${
+                      isActive
+                        ? 'text-white'
+                        : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    }`}
+                    style={isActive ? {
+                      background: 'linear-gradient(135deg, rgba(16,185,129,0.15), rgba(2,132,199,0.1))',
+                      border: '1px solid rgba(16,185,129,0.25)',
+                      boxShadow: '0 0 10px rgba(16,185,129,0.1)',
+                    } : {
+                      border: '1px solid transparent',
+                    }}
+                  >
+                    <Icon className={`h-3 w-3 lg:h-3.5 lg:w-3.5 ${isActive ? 'text-emerald-400' : ''}`} />
+                    <span>{link.name}</span>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
           {/* User section */}
-          <div className="flex items-center gap-2 pr-1">
+          <div className="flex-none flex justify-end items-center gap-2 pr-1 min-w-fit">
+            <div className="hidden lg:flex items-center gap-4 mr-2">
+               <div className="flex flex-col items-end">
+                  <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-black/40 border border-white/5">
+                    <div className={`w-1.5 h-1.5 rounded-full ${health.status === 'healthy' ? 'bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]' : health.status === 'connecting' ? 'bg-amber-400 animate-pulse' : 'bg-rose-500'}`} />
+                    <span className="text-[8px] font-mono font-bold text-slate-400 uppercase tracking-widest">Neural Link</span>
+                  </div>
+                  {health.status === 'healthy' && (
+                    <span className="text-[8px] font-mono text-emerald-500/50 mt-1 uppercase">{health.latency}ms Latency</span>
+                  )}
+               </div>
+            </div>
+
             {activeUser && (
               <>
                 <div

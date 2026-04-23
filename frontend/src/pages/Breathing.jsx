@@ -297,7 +297,8 @@ const Breathing = () => {
                 animate={{
                   scale: phase === 'INHALE' ? 1.4 : phase === 'EXHALE' ? 1 : 1.3,
                   borderColor: isActive ? `${currentEx.color}40` : 'rgba(255,255,255,0.1)',
-                  background: isActive ? `${currentEx.color}10` : 'rgba(0,0,0,0.6)'
+                  background: isActive ? `radial-gradient(circle, ${currentEx.color}30 0%, ${currentEx.color}05 100%)` : 'rgba(0,0,0,0.6)',
+                  boxShadow: isActive ? (phase === 'INHALE' ? `0 0 120px ${currentEx.color}40` : `0 0 40px ${currentEx.color}20`) : 'none'
                 }}
                 transition={{ 
                   duration: phase === 'INHALE' ? currentEx.timing.inhale : phase === 'EXHALE' ? currentEx.timing.exhale : 1,

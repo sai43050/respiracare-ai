@@ -533,9 +533,12 @@ async def analyze_with_gemini(image_bytes: bytes):
         return None
     try:
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-1.5-pro",
             contents=[
-                "Analyze this Chest X-ray. Identify potential pathologies (Pneumonia, Effusion, Normal, etc.). Return a JSON object with: 'prediction' (primary finding), 'confidence' (0-1), 'findings' (list of strings), 'suggestions' (list of clinical next steps). Do not include any text outside the JSON.",
+                "VERIFICATION PROTOCOL: First, determine if this image is a Chest X-ray (CXR). "
+                "If it is NOT a Chest X-ray (e.g., a photo of a person, animal, different organ, or text), return JSON ONLY: {'error': 'INVALID_ANATOMY', 'message': 'The uploaded image is not a Chest X-ray. Analysis restricted to respiratory imaging.'}."
+                "If it IS a Chest X-ray, analyze for potential pathologies. Return a JSON object with: 'prediction', 'confidence' (0.1-1.0), 'findings' (list), 'suggestions' (list). "
+                "Ensure NO text appears outside the JSON object.",
                 types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg")
             ]
         )
@@ -553,7 +556,7 @@ async def analyze_audio_with_gemini(audio_bytes: bytes):
     try:
         # Gemini can analyze audio/spectrograms
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-1.5-pro",
             contents=[
                 "Analyze this respiratory audio (cough/breathing). Identify potential states (Healthy, COVID-19, Symptomatic). Return a JSON object with: 'prediction', 'confidence' (0-1), 'explanation' (string). Do not include any text outside the JSON.",
                 types.Part.from_bytes(data=audio_bytes, mime_type="audio/wav")
@@ -565,6 +568,29 @@ async def analyze_audio_with_gemini(audio_bytes: bytes):
     except Exception as e:
         print(f"Gemini Audio Fallback Error: {e}")
         return None
+
+async def verify_chest_xray(image_bytes: bytes):
+    if not client:
+        return True # Fallback only if client is missing
+    try:
+        response = client.models.generate_content(
+            model="gemini-1.5-pro",
+            contents=[
+                "MANDATORY CLINICAL AUDIT: Is this a human Chest X-ray? "
+                "Analyze for ribs, lungs, and heart silhouette. "
+                "If it is a photo of an animal, car, landscape, person (not X-ray), or any other object, answer NO. "
+                "Answer EXACTLY one word: YES or NO.",
+                types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg")
+            ]
+        )
+        ans = response.text.strip().upper()
+        # Strict matching: Must contain YES and NOT contain NO
+        is_valid = "YES" in ans and "NO" not in ans
+        print(f"ANATOMY AUDIT RESULT: [{ans}] -> Valid: {is_valid}")
+        return is_valid
+    except Exception as e:
+        print(f"ANATOMY AUDIT FATAL ERROR (Blocking for Safety): {e}")
+        return False # BLOCK BY DEFAULT ON ERROR
 
 @app.post("/api/predict")
 async def predict_scan(
@@ -587,16 +613,31 @@ async def predict_scan(
         import io
         img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
         arr = np.array(img)
+        w, h = img.size
+        # Stricter Color Threshold: 15.0 (was 30.0)
         diff_rg = np.mean(np.abs(arr[:,:,0].astype(int) - arr[:,:,1].astype(int)))
         diff_rb = np.mean(np.abs(arr[:,:,0].astype(int) - arr[:,:,2].astype(int)))
-        if diff_rg > 30.0 or diff_rb > 30.0:
-            raise HTTPException(status_code=400, detail="Image appears to be a color photograph. Please upload a grayscale Chest X-ray.")
+        if diff_rg > 15.0 or diff_rb > 15.0:
+            raise HTTPException(status_code=400, detail="Neural Link Refused: Image detected as a color photograph. Only clinical grayscale Chest X-rays are permitted.")
+        
+        # Aspect Ratio Validation: Standard CXRs are typically within 0.7 to 1.4 ratio
+        ratio = w / h
+        if ratio < 0.5 or ratio > 2.0:
+            raise HTTPException(status_code=400, detail="Neural Link Refused: Invalid clinical aspect ratio. The imagery does not match standard X-ray dimensions.")
+            
         if np.std(arr) < 5.0:
             raise HTTPException(status_code=400, detail="Image lacks sufficient structural contrast.")
     except HTTPException:
         raise
     except Exception as e:
         print("Heuristic pre-validation error:", e)
+
+    # BLOCK RANDOM IMAGES: Mandatory Intelligence Verification
+    if not await verify_chest_xray(image_bytes):
+        raise HTTPException(
+            status_code=400, 
+            detail="Neural Link Discrepancy: The uploaded imagery is not recognized as a human Chest X-ray. Clinical analysis aborted."
+        )
         
     with open(file_path, "wb") as buffer:
         buffer.write(image_bytes)
@@ -608,27 +649,35 @@ async def predict_scan(
 
         if mode == "neural" and models:
             try:
-                result = predict_real_image(image_bytes, file.filename)
-                actual_engine = "neural"
+                # TRIPLE-MODEL CONSENSUS CORE
+                neural_result = predict_real_image(image_bytes, file.filename)
+                gemini_result = await analyze_with_gemini(image_bytes)
+                
+                if neural_result and gemini_result:
+                    # Consensus Algorithm: Weighted Average
+                    # neural_result weight: 0.6 (Specialized), gemini weight: 0.4 (Reasoning)
+                    combined_confidence = (neural_result['confidence'] * 0.6) + (gemini_result['confidence'] * 0.4)
+                    
+                    # Logic: If they agree on the finding name, use it. If not, pick the highest confidence.
+                    if neural_result['prediction'].lower() == gemini_result['prediction'].lower():
+                        final_pred = neural_result['prediction']
+                    else:
+                        final_pred = neural_result['prediction'] if neural_result['confidence'] > gemini_result['confidence'] else gemini_result['prediction']
+                    
+                    result = {
+                        "prediction": final_pred,
+                        "confidence": combined_confidence,
+                        "findings": list(set(neural_result.get('findings', []) + gemini_result.get('findings', []))),
+                        "suggestions": list(set(neural_result.get('suggestions', []) + gemini_result.get('suggestions', []))),
+                        "gradcam": neural_result.get("gradcam", "")
+                    }
+                    actual_engine = "Elite-V1.5-SUPER-STRICT"
+                    print(f"DIAGNOSTIC COMPLETE: Engine={actual_engine}, Result={final_pred}")
+                else:
+                    result = neural_result or gemini_result
+                    actual_engine = "Elite-Degraded-V1.1"
             except Exception as e:
-                print(f"Primary Neural Engine Failed: {e}. Attempting Resilient Fallback...")
-        
-        # Resilient Fallback to Gemini if Neural failed or models missing
-        if not result:
-            gemini_result = await analyze_with_gemini(image_bytes)
-            if gemini_result:
-                result = gemini_result
-                actual_engine = "gemini_vision"
-                # Add technical note to findings
-                if "findings" not in result: result["findings"] = []
-                result["findings"].append("Analysis verified by Gemini 2.0 High-Res Engine.")
-        
-        # Ultimate Fallback to Heuristic
-        if not result:
-            result = predict_heuristic(image_bytes)
-            actual_engine = "heuristic"
-            if "findings" not in result: result["findings"] = []
-            result["findings"].append("Analysis performed by Resilient Heuristic Fallback.")
+                print(f"Primary Consensus Engine Failed: {e}. Attempting Resilient Fallback...")
         
         scan_record = db_models.ScanRecord(
             user_id=user.id,
@@ -701,7 +750,17 @@ async def predict_scan_fast(
         raise HTTPException(status_code=401, detail="User session expired.")
 
     image_bytes = await file.read()
+    
+    # BLOCK RANDOM IMAGES: Mandatory Intelligence Verification
+    if not await verify_chest_xray(image_bytes):
+        raise HTTPException(
+            status_code=400, 
+            detail="Neural Link Discrepancy: The uploaded imagery is not recognized as a human Chest X-ray. Clinical analysis aborted."
+        )
+
     result = await analyze_with_gemini(image_bytes)
+    if result and "error" in result and result["error"] == "INVALID_ANATOMY":
+        raise HTTPException(status_code=400, detail=result["message"])
     
     if not result:
         # Final safety heuristic

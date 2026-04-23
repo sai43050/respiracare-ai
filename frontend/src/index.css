@@ -35,6 +35,20 @@
     overflow-x: hidden;
   }
 
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: url('/bg_watermark.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 70vmin;
+    opacity: 0.5; /* High enough to be completely visible, balanced for contrast */
+    filter: drop-shadow(0 0 30px rgba(0, 0, 0, 0.8));
+  }
+
   @keyframes slow-rotate {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }

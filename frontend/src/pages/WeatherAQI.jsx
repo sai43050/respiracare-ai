@@ -7,6 +7,8 @@ const WeatherAQI = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [locationName, setLocationName] = useState('Detecting Location...');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
 
   const fetchWeather = async (lat, lon) => {
     setLoading(true);
@@ -78,6 +80,30 @@ const WeatherAQI = () => {
     setData(mappedData);
     setLoading(false);
     setError(null);
+  };
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    
+    setIsSearching(true);
+    try {
+      const resp = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(searchQuery)}&count=1&language=en&format=json`);
+      const json = await resp.json();
+      
+      if (json.results && json.results.length > 0) {
+        const city = json.results[0];
+        setLocationName(`${city.name}, ${city.country}`);
+        fetchWeather(city.latitude, city.longitude);
+        setSearchQuery('');
+      } else {
+        setError("Coordinate lookup failed. Signal lost in stratosphere.");
+      }
+    } catch (err) {
+      setError("Satellite uplink failed during search.");
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   const getWeatherCodeText = (code) => {
@@ -222,15 +248,23 @@ const WeatherAQI = () => {
             </p>
           </div>
           
-          <div className="bg-black/40 px-6 py-4 rounded-[2rem] border border-white/5 flex items-center gap-5 group hover:border-cyan-500/20 transition-all">
-            <div className="relative">
-               <div className="w-3 h-3 rounded-full animate-pulse shadow-[0_0_15px_currentColor]" style={{ color: aqiConfig.color, background: aqiConfig.color }}></div>
-            </div>
-            <div>
-               <div className="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-black flex items-center gap-2 mb-0.5">
-                 <MapPin size={12} className="text-cyan-400" /> Active Registry
-               </div>
-               <div className="text-sm font-bold text-white group-hover:text-cyan-400 transition-colors uppercase tracking-tight">{locationName}</div>
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <form onSubmit={handleSearch} className="relative w-full sm:w-64">
+              <input 
+                type="text" 
+                placeholder="Override Location..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-3 text-xs text-white focus:border-cyan-500/40 outline-none transition-all placeholder:text-slate-600"
+              />
+              <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-slate-500 hover:text-white transition-colors">
+                {isSearching ? <Loader2 size={14} className="animate-spin" /> : <MapPin size={14} />}
+              </button>
+            </form>
+            <div className="hidden sm:block h-8 w-px bg-white/5" />
+            <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-black/40 border border-white/5">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">{locationName}</span>
             </div>
           </div>
         </div>

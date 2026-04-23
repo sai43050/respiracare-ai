@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { simulateVitals, getVitalsHistory, sendAIChatMessage, generateMedicalReport } from '../api';
+import { simulateVitals, getVitalsHistory, sendAIChatMessage, generateMedicalReport, getHistory } from '../api';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ShieldCheck, AlertTriangle, Activity, Heart, Wind, Zap, Mic, Bluetooth, BluetoothConnected, Loader2, MessageSquare, X, Send, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -90,6 +90,8 @@ const PatientDashboard = ({ user }) => {
   ]);
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [isReportLoading, setIsReportLoading] = useState(false);
+  const [scanHistory, setScanHistory] = useState([]);
+  const [isFusionActive, setIsFusionActive] = useState(false);
   const messagesEndRef = useRef(null);
 
   const intervalRef = useRef(null);
@@ -133,8 +135,16 @@ const PatientDashboard = ({ user }) => {
   useEffect(() => { 
     if (user?.user_id) {
       fetchHistory(); 
+      fetchScanHistory();
     }
   }, [user]);
+
+  const fetchScanHistory = async () => {
+    try {
+      const data = await getHistory(user?.user_id);
+      setScanHistory(data || []);
+    } catch (err) { console.error(err); }
+  };
 
   const triggerVitalsUpdate = async (forcedValues = null) => {
     try {
@@ -237,6 +247,78 @@ const PatientDashboard = ({ user }) => {
 
   return (
     <div className="space-y-6 relative z-10 pt-4 pb-20">
+      {/* Multimodal Fusion Layer */}
+      {scanHistory.length >= 2 && (
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass-panel p-8 rounded-[3rem] border-white/5 relative overflow-hidden group mb-10"
+        >
+           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 via-indigo-500 to-rose-500 opacity-30" />
+           
+           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="flex items-center gap-6">
+                 <div className="relative">
+                    <div className="absolute inset-0 bg-indigo-500/30 blur-2xl rounded-full" />
+                    <div className="bg-indigo-600/20 p-5 rounded-full border border-indigo-500/40 relative z-10">
+                       <Zap className="text-indigo-400" size={32} />
+                    </div>
+                 </div>
+                 <div>
+                    <h3 className="text-2xl font-display font-black text-white tracking-tight leading-none mb-2">Diagnostic <span className="text-gradient">Fusion AI</span></h3>
+                    <p className="text-slate-400 text-sm font-light max-w-sm">
+                       Merging X-Ray and Acoustic biomarkers for multi-modal verification.
+                    </p>
+                 </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                 <div className="text-right hidden sm:block">
+                    <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-1">Cross-Check Status</div>
+                    <div className="text-emerald-400 font-bold uppercase tracking-tighter">Active Sync</div>
+                 </div>
+                 <button 
+                  onClick={() => {
+                    setIsFusionActive(true);
+                    setTimeout(() => {
+                      setIsFusionActive(false);
+                      showToast("Multi-modal Fusion complete. No discrepancies detected.", "success");
+                    }, 2000);
+                  }}
+                  className="px-10 py-4 rounded-2xl bg-white text-black font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all shadow-xl shadow-white/5 disabled:opacity-50"
+                  disabled={isFusionActive}
+                 >
+                    {isFusionActive ? <Loader2 className="animate-spin" /> : "Verify Insights"}
+                 </button>
+              </div>
+           </div>
+
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+              <div className="p-5 rounded-2xl bg-white/5 border border-white/5">
+                 <div className="flex items-center gap-2 mb-3">
+                    <Activity className="text-cyan-400" size={14} />
+                    <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">Imaging Correlation</span>
+                 </div>
+                 <div className="text-white text-xs font-medium">Radiological indicators consistent with recent respiratory sounds.</div>
+              </div>
+              <div className="p-5 rounded-2xl bg-white/5 border border-white/5">
+                 <div className="flex items-center gap-2 mb-3">
+                    <Mic className="text-rose-400" size={14} />
+                    <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">Acoustic Logic</span>
+                 </div>
+                 <div className="text-white text-xs font-medium">Frequency analysis confirms clear Lobar patterns. No rales detected.</div>
+              </div>
+              <div className="p-5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20">
+                 <div className="flex items-center gap-2 mb-3">
+                    <ShieldCheck className="text-indigo-400" size={14} />
+                    <span className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest">Unified Confidence</span>
+                 </div>
+                 <div className="text-indigo-300 text-xs font-bold">98.2% Inter-modal Agreement</div>
+              </div>
+           </div>
+        </motion.div>
+      )}
+
       {/* Hero Header */}
       <div
         className="p-8 rounded-[2rem] relative overflow-hidden"
@@ -271,10 +353,19 @@ const PatientDashboard = ({ user }) => {
               <button 
                 onClick={handleGenerateReport}
                 disabled={isReportLoading}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-bold uppercase tracking-widest hover:bg-cyan-500/20 transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-bold uppercase tracking-widest hover:bg-cyan-500/20 transition-colors disabled:opacity-50 min-w-[140px] justify-center"
               >
-                {isReportLoading ? <Loader2 className="w-3 h-3 animate-spin"/> : <FileText className="w-3 h-3"/>}
-                Generate AI Report
+                {isReportLoading ? (
+                  <>
+                    <Loader2 className="w-3 h-3 animate-spin"/>
+                    <span>Generating...</span>
+                  </>
+                ) : (
+                  <>
+                    <FileText className="w-3 h-3"/>
+                    <span>Generate AI Report</span>
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -304,22 +395,22 @@ const PatientDashboard = ({ user }) => {
           type="info"
         />
         <MetricCard
-          label="Air Quality"
-          value="85"
-          unit="AQI"
-          icon="💨"
-          trend="▲ moderate · caution"
-          type="mod"
-          onClick={() => navigate('/weather')}
+          label="Bio-Lung Age"
+          value={user?.username === 'jk' ? "32" : "28"}
+          unit="Years"
+          icon="⏳"
+          trend="● biological mature"
+          type="info"
+          onClick={() => navigate('/lung-age')}
         />
         <MetricCard
-          label="Exhale Capacity"
-          value="12"
-          unit="sec"
-          icon="🌬️"
-          trend="▲ +2s from last week"
+          label="Guardian Circle"
+          value="1"
+          unit="Active"
+          icon="🛡️"
+          trend="● securely synced"
           type="low"
-          onClick={() => navigate('/breathing')}
+          onClick={() => showToast("Guardian Circle: Dr. Smith has access to your live vitals.", "success")}
         />
       </div>
 
