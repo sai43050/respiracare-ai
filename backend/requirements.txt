@@ -1,5 +1,5 @@
 # Pin numpy strictly before anything else can upgrade it
-numpy==1.26.4
+numpy>=1.26.0,<1.27.0
 fastapi==0.111.0
 uvicorn[standard]==0.29.0
 sqlalchemy==2.0.30

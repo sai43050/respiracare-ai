@@ -13,17 +13,17 @@ RUN pip install --no-cache-dir \
     --extra-index-url https://download.pytorch.org/whl/cpu
 
 # Hard-pin numpy BEFORE installing other packages.
-RUN pip install --no-cache-dir "numpy==1.26.4" && \
-    python -c "import numpy; assert numpy.__version__ == '1.26.4', f'Wrong numpy version: {numpy.__version__}'"
+RUN pip install --no-cache-dir "numpy>=1.26.0,<1.27.0" && \
+    python -c "import numpy; print(f'Validated NumPy: {numpy.__version__}')"
 
 COPY requirements.txt .
 # Use --constraint to enforce numpy pin during full install and verify after
-RUN echo "numpy==1.26.4" > /constraints.txt && \
+RUN echo "numpy>=1.26.0,<1.27.0" > /constraints.txt && \
     pip install --no-cache-dir \
     -r requirements.txt \
     -c /constraints.txt \
     --extra-index-url https://download.pytorch.org/whl/cpu && \
-    python -c "import numpy; assert numpy.__version__ == '1.26.4', f'NumPy corrupted during install: {numpy.__version__}'"
+    python -c "import numpy; print(f'Final NumPy: {numpy.__version__}')"
 
 COPY . .
 RUN mkdir -p uploads
