@@ -633,6 +633,13 @@ async def predict_scan(
         print("Heuristic pre-validation error:", e)
 
     # BLOCK RANDOM IMAGES: Mandatory Intelligence Verification
+    from agent import API_KEY
+    if not API_KEY:
+        raise HTTPException(
+            status_code=500,
+            detail="Neural Engine Offline: GEMINI_API_KEY is missing in Railway Variables. Please add the secret key to enable clinical analysis."
+        )
+
     if not await verify_chest_xray(image_bytes):
         raise HTTPException(
             status_code=400, 
