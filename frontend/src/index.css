@@ -98,12 +98,26 @@
     backdrop-filter: blur(28px) saturate(160%);
     -webkit-backdrop-filter: blur(28px) saturate(160%);
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.015) 0%, rgba(255, 255, 255, 0.005) 100%);
-    border: none;
-    box-shadow:
-      0 0 0 0.5px rgba(255,255,255,0.04),
-      0 10px 20px rgba(0,0,0,0.6),
-      inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* --- CLINICAL MARKDOWN STYLING --- */
+  .clinical-markdown h1 { @apply text-2xl font-black text-white mb-6 border-b border-white/10 pb-4 tracking-tighter uppercase; }
+  .clinical-markdown h2 { @apply text-xs font-mono font-bold text-indigo-400 mt-8 mb-4 uppercase tracking-[0.2em]; }
+  .clinical-markdown h3 { @apply text-sm font-bold text-white mt-6 mb-2; }
+  .clinical-markdown p { @apply text-[13px] text-slate-400 leading-relaxed mb-4; }
+  .clinical-markdown ul { @apply space-y-2 mb-6 ml-1; }
+  .clinical-markdown li { @apply text-[12px] text-slate-300 flex items-start gap-2; }
+  .clinical-markdown li::before { content: "●"; @apply text-indigo-500 text-[8px] mt-1.5 flex-shrink-0; }
+  .clinical-markdown blockquote { @apply border-l-2 border-slate-600 pl-4 py-1 italic text-slate-500 text-xs mb-6; }
+  .clinical-markdown strong { @apply text-white font-semibold; }
+  .clinical-markdown hr { @apply border-white/5 my-8; }
+
+  .glass-card-hover {
+    @apply transition-all duration-300;
+  }
+  .glass-card-hover:hover {
+     background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+     box-shadow: 0 20px 40px rgba(0,0,0,0.4);
   }
 
   .glass-card:hover {

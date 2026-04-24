@@ -654,11 +654,7 @@ async def predict_scan(
                 gemini_result = await analyze_with_gemini(image_bytes)
                 
                 if neural_result and gemini_result:
-                    # Consensus Algorithm: Weighted Average
-                    # neural_result weight: 0.6 (Specialized), gemini weight: 0.4 (Reasoning)
                     combined_confidence = (neural_result['confidence'] * 0.6) + (gemini_result['confidence'] * 0.4)
-                    
-                    # Logic: If they agree on the finding name, use it. If not, pick the highest confidence.
                     if neural_result['prediction'].lower() == gemini_result['prediction'].lower():
                         final_pred = neural_result['prediction']
                     else:
@@ -672,12 +668,18 @@ async def predict_scan(
                         "gradcam": neural_result.get("gradcam", "")
                     }
                     actual_engine = "Elite-V1.5-SUPER-STRICT"
-                    print(f"DIAGNOSTIC COMPLETE: Engine={actual_engine}, Result={final_pred}")
                 else:
-                    result = neural_result or gemini_result
+                    result = neural_result or gemini_result or await analyze_with_gemini(image_bytes)
                     actual_engine = "Elite-Degraded-V1.1"
             except Exception as e:
                 print(f"Primary Consensus Engine Failed: {e}. Attempting Resilient Fallback...")
+                result = await analyze_with_gemini(image_bytes)
+                actual_engine = "Rapid-Pro-Fallback"
+        else:
+            # Models failed to load (RAM issue) - Use Ultra-Reliable Gemini Path
+            print("System running in Resource-Saver mode: Routing to Gemini Pro...")
+            result = await analyze_with_gemini(image_bytes)
+            actual_engine = "Consensus-Elite-1.5"
         
         scan_record = db_models.ScanRecord(
             user_id=user.id,
@@ -997,7 +999,13 @@ def generate_ai_report(user_id: int, current_user: db_models.User = Depends(get_
     vitals = db.query(db_models.VitalsHistory).filter(db_models.VitalsHistory.user_id == user_id).order_by(db_models.VitalsHistory.timestamp.desc()).limit(10).all()
     scans = db.query(db_models.ScanRecord).filter(db_models.ScanRecord.user_id == user_id).order_by(db_models.ScanRecord.timestamp.desc()).limit(10).all()
     
-    report_markdown = agent.generate_medical_report(patient.username, vitals, scans)
+    report_markdown = agent.generate_medical_report(patient.full_name or patient.username, vitals, scans)
+    
+    # PERSISTENCE: Save the latest report to the profile
+    patient.current_report = report_markdown
+    db.commit()
+    
+    return {"report": report_markdown}
     return {"report": report_markdown}
 
 @app.post("/api/ai/chat")

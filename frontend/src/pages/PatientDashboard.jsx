@@ -5,6 +5,7 @@ import { ShieldCheck, AlertTriangle, Activity, Heart, Wind, Zap, Mic, Bluetooth,
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/Toast';
+import ReactMarkdown from 'react-markdown';
 
 const MetricCard = ({ label, value, unit, icon, trend, type, onClick }) => {
   const typeColors = {
@@ -194,24 +195,19 @@ const PatientDashboard = ({ user }) => {
     }
   };
 
+  const [reportContent, setReportContent] = useState(null);
+  const [showReportModal, setShowReportModal] = useState(false);
+
   const handleGenerateReport = async () => {
-    if (!user?.user_id) return;
     setIsReportLoading(true);
     try {
       const data = await generateMedicalReport(user.user_id);
-      showToast("AI Report Generated. Preparing download...", "success");
-      // Use Blob to trigger dummy download of the report
-      const blob = new Blob([data.report || data], { type: 'text/markdown' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = 'Medical_Report.md';
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
+      const content = data.report || data;
+      setReportContent(content);
+      setShowReportModal(true);
+      showToast("Clinical Assessment Generated.", "success");
     } catch (err) {
-      showToast("Failed to generate report.", "error");
+      showToast("Diagnostic analysis failed.", "error");
     } finally {
       setIsReportLoading(false);
     }
@@ -585,6 +581,74 @@ const PatientDashboard = ({ user }) => {
         >
            <MessageSquare className="w-6 h-6 text-white" />
         </button>
+        {/* Report Modal */}
+        <AnimatePresence>
+          {showReportModal && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowReportModal(false)}
+                className="absolute inset-0 bg-black/80 backdrop-blur-md"
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 30 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 30 }}
+                className="relative w-full max-w-2xl bg-[#0a0a0a] border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl flex flex-col max-h-[85vh]"
+              >
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-indigo-500" />
+                
+                <div className="flex items-center justify-between p-6 border-b border-white/5 bg-white/[0.02]">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
+                      <FileText className="text-indigo-400 w-4 h-4" />
+                    </div>
+                    <div>
+                      <h3 className="text-white font-black text-sm uppercase tracking-tighter">Diagnostic Clinical Summary</h3>
+                      <p className="text-[10px] text-slate-500 font-mono uppercase tracking-widest">Medical Intelligence Synthesis</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => setShowReportModal(false)}
+                    className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
+                  >
+                    <X className="w-4 h-4 text-slate-400" />
+                  </button>
+                </div>
+
+                <div className="p-8 overflow-y-auto scrollbar-thin text-slate-300">
+                  <div className="prose prose-invert prose-sm max-w-full clinical-markdown">
+                    <ReactMarkdown>{reportContent}</ReactMarkdown>
+                  </div>
+                  
+                  <div className="mt-10 p-4 rounded-xl bg-orange-500/5 border border-orange-500/20">
+                     <p className="text-[10px] text-orange-400 font-mono leading-relaxed uppercase tracking-tighter">
+                        Verification Required: This report was synthesized by the Lung Whisperer AI Model. It is intended for clinical support and must be validated by a board-certified physician before any treatment modification.
+                     </p>
+                  </div>
+                </div>
+
+                <div className="p-6 border-t border-white/5 flex gap-4 bg-black/20">
+                    <button 
+                      onClick={() => window.print()}
+                      className="flex-1 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white text-[10px] font-bold uppercase tracking-widest transition-all"
+                    >
+                      Print Summary
+                    </button>
+                    <button 
+                      onClick={() => setShowReportModal(false)}
+                      className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg shadow-indigo-500/20"
+                    >
+                      Acknowledge Report
+                    </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
       </div>
 
     </div>
