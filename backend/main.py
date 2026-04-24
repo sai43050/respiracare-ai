@@ -862,6 +862,8 @@ async def predict_audio(
         "image_path": scan_record.image_path,
         "timestamp": scan_record.timestamp,
         "modality": "audio",
+        "findings": json.loads(scan_record.findings) if scan_record.findings else [],
+        "suggestions": [result.get('explanation', 'Awaiting further clinical markers.')],
         "engine": actual_engine
     }
 
