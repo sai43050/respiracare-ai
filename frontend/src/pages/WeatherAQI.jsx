@@ -11,6 +11,10 @@ const WeatherAQI = () => {
   const [isSearching, setIsSearching] = useState(false);
 
   const fetchWeather = async (lat, lon) => {
+    // Round coordinates for API consistency
+    lat = parseFloat(lat).toFixed(4);
+    lon = parseFloat(lon).toFixed(4);
+    
     setLoading(true);
     let weatherData = null;
     let aqiData = null;
