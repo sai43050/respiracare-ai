@@ -12,7 +12,7 @@ export default function UploadScan({ user }) {
   const [error, setError] = useState(null);
   const { showToast } = useToast();
   const navigate = useNavigate();
-  const [deepScan, setDeepScan] = useState(false);
+  const [deepScan, setDeepScan] = useState(true); // FIX: Default to Neural for accurate AI analysis
   const [statusStep, setStatusStep] = useState(0); // 0: Idle, 1: Optimizing, 2: Scanning, 3: Rescuing, 4: Finalizing
   const loadingTimer = useRef(null);
   const abortControllerRef = useRef(null);
@@ -129,7 +129,7 @@ export default function UploadScan({ user }) {
     setError(null);
     setStatusStep(1);
 
-    const activeMode = sanitizedMode || (deepScan ? "neural" : "heuristic");
+    const activeMode = sanitizedMode || (deepScan ? "neural" : "neural"); // Always neural for accuracy
 
     // Create a new AbortController for this request
     const controller = new AbortController();
@@ -227,7 +227,7 @@ export default function UploadScan({ user }) {
 
   const statusMessages = {
     1: "Optimizing Imagery...",
-    2: deepScan ? "Deep Neural Scanning..." : "High-Speed Scanning...",
+    2: deepScan ? "Deep Neural Scanning..." : "Neural AI Scanning...",
     3: "Auto-Rescue Active — Switching Engine...",
     4: "Packaging Results...",
   };
